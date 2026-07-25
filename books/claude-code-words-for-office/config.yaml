@@ -1,24 +1,22 @@
-title: "AIが何をしているか分かる本 — 事務職のためのClaude Cowork / Claude Code 入門"
+title: "AIが何をしているか分かる本 — 事務職のためのClaude Cowork入門"
 summary: |
-  Claude Cowork や Claude Code を使い始めた非エンジニアのための入門書＋用語集です。
+  プログラミングをしない人が Claude Cowork で安全に作業できるようになるための本です。
+  ターミナル（黒い画面）は使いません。
 
   前半は Claude Desktop のインストールからフォルダの接続、プロジェクトの作り方までの手順。
-  後半は画面に出てくるカタカナ語・英語、AI が実行するコマンド、
-  そして「Bash(grep -rn ...)」のような表示の読み方を、日本語で1つずつ引けるようにまとめました。
+  後半は承認画面に出てくる言葉（Read/Write、削除保護、プロンプトインジェクション）と、
+  作業を止めるべきサインの見分け方をまとめました。
 
-  ゴールは用語を暗記することではなく、AI が許可を求めてきたときに
-  「これは安全だから Yes」「これは危ないから一旦止める」を自分で判断できるようになることです。
-topics: ["claude", "claudecode", "ai", "cli", "初心者"]
+  ゴールは用語を暗記することではなく、AI が「これをしていいですか？」と聞いてきたときに
+  「これは安全だから通す」「これは危ないから止める」を自分で判断できるようになることです。
+topics: ["claude", "ai", "生成ai", "初心者", "業務効率化"]
 published: true
 price: 0
 chapters:
   - introduction
   - setup-cowork
   - folders-and-projects
-  - screen-words
-  - project-words
-  - commands-look
-  - commands-change
-  - reading-logs
+  - cowork-words
+  - approval-words
+  - commands-onepage
   - judge-yes-no
-  - appendix-symbols
