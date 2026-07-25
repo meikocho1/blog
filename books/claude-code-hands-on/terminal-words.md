@@ -171,4 +171,4 @@ Claude Code も CLI ツールです。反対語は **GUI**（ジーユーアイ�
 | `.env` は開かせない |
 | `node_modules` は消しても入れ直せる |
 
-次の章は Git です。
+次の章は、Claude Code 自身のコマンドの全一覧です。

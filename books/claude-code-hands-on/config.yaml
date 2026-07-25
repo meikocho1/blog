@@ -1,9 +1,11 @@
-title: "黒い画面が読めるようになる本 — Claude Code の用語・コマンド・ログ"
+title: "黒い画面が読めるようになる本 — Claude Code の用語・コマンド・ログ全一覧"
 summary: |
   Claude Code を少し触ってみて、画面に流れる英語のコマンドやログが読めずに詰まった人のための本です。
 
-  ターミナルとGitの言葉、AIが実行して見せる Linux コマンド（見るだけ／変える）、
-  「Bash(grep -rn ...)」のような表示の読み方、記号とエラー文の逆引きをまとめました。
+  読み物の章（考え方）と、引くための全一覧の章（辞典）を分けて収録しました。
+  Claude Code 自身のコマンドとスラッシュコマンド、AIが実行する Linux コマンド（見るだけ／変える）、
+  Git、画面表示とツール名、エラー文の逆引き、AI時代の英語用語まで、
+  すべて危険度つきで 360 項目以上を日本語で解説しています。
 
   ※ プログラミングをしない事務職の方は、先に『AIが何をしているか分かる本』
   （Claude Cowork 編）を読んでください。この本はそこから一歩進んだ内容です。
@@ -13,8 +15,14 @@ price: 0
 chapters:
   - introduction
   - terminal-words
-  - git-words
+  - claude-code-cli
+  - claude-code-screen
   - commands-look
   - commands-change
+  - ref-commands
+  - git-words
+  - ref-git
   - reading-logs
   - appendix-symbols
+  - ref-errors
+  - ai-terms
