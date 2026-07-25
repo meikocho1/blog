@@ -217,7 +217,7 @@ Cowork なら「設定 > Cowork」の Global instructions に、Claude Code な�
 
 ### ターミナルで Claude Code を触る人
 
-📘 **『黒い画面が読めるようになる本 — Claude Code の用語・コマンド・ログ』**
+📘 **『黒い画面が読めるようになる本 — Claude Code コマンド・用語辞典』**
 
 - ターミナルと Git の言葉
 - 見るだけのコマンド／変えるコマンド（オプション付きの一覧）
