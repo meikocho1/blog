@@ -3,7 +3,7 @@ title: "Cloudflare OS は OS ではない — 本体は「エージェントが�
 emoji: "🚪"
 type: "idea"
 topics: ["cloudflare", "ai", "llm", "mcp", "セキュリティ"]
-published: false
+published: true
 source: cloudflare-blog
 audience: engineer
 ---

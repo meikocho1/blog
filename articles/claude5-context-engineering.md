@@ -3,7 +3,7 @@ title: "Claude Code はシステムプロンプトを8割捨てた — Claude 5 
 emoji: "✂️"
 type: "idea"
 topics: ["claudecode", "claude", "ai", "llm", "プロンプトエンジニアリング"]
-published: false
+published: true
 source: x-post
 audience: engineer
 ---

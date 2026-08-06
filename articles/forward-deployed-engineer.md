@@ -3,7 +3,7 @@ title: "Forward Deployed Engineer が2026年に「最も熱い職種」になっ
 emoji: "🎒"
 type: "idea"
 topics: ["キャリア", "ai", "llm", "エンジニア", "組織"]
-published: false
+published: true
 source: x-article
 audience: engineer
 ---
