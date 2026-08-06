@@ -13,7 +13,7 @@ summary: |
   ※ ターミナルを使わない事務職の方は、姉妹編『AIが何をしているか分かる本』
   （Claude Cowork 編）が向いています。
 topics: ["claudecode", "cli", "git", "linux", "初心者"]
-published: false
+published: true
 price: 0
 chapters:
   - introduction
