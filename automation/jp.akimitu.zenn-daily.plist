@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Label</key>
+	<string>jp.akimitu.zenn-daily</string>
+	<key>ProgramArguments</key>
+	<array>
+		<!-- TCC対策: Documentsへのアクセス許可を持てるようosacompile製アプレット経由で起動する。
+		     アプレットは daily-article.sh を呼ぶだけなので、スクリプト編集時の再コンパイルは不要 -->
+		<string>/Users/akimitu/Applications/ZennDaily.app/Contents/MacOS/applet</string>
+	</array>
+	<!-- ログイン（電源オンから起動）時に発火 -->
+	<key>RunAtLoad</key>
+	<true/>
+	<!-- 毎朝 9:17。スリープ中に過ぎた場合は次の復帰（フタを開けたとき）にまとめて1回発火する -->
+	<key>StartCalendarInterval</key>
+	<dict>
+		<key>Hour</key>
+		<integer>9</integer>
+		<key>Minute</key>
+		<integer>17</integer>
+	</dict>
+	<!-- 起床中は1時間ごとに再入する。成功済み／3回試行済みの日は即 exit するので実質ノーオペ。
+	     スリープでプロセスが殺された日を拾い直すための保険 -->
+	<key>StartInterval</key>
+	<integer>3600</integer>
+	<key>StandardOutPath</key>
+	<string>/tmp/zenn-daily.launchd.log</string>
+	<key>StandardErrorPath</key>
+	<string>/tmp/zenn-daily.launchd.log</string>
+</dict>
+</plist>
