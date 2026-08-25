@@ -2,16 +2,18 @@ import { getCollection } from 'astro:content';
 
 export const SITE = {
   title: 'すみと黒の記録',
-  description: 'AI コーディングと開発まわりを、一次資料まで戻って確かめる記録。',
+  description: '気になったことを調べて整理しておく、個人のメモ置き場。',
   author: 'すみ',
   authorUrl: 'https://github.com/meikocho1',
-  bio: 'AI コーディングまわりの主張を、一次資料まで戻って確かめています。監修：黒（猫）。',
+  bio: '気になった話題を自分なりに整理してメモしておくスペースです。監修：黒（猫）。',
   avatar: '/images/profile-icon/avatar-192.png',
   lang: 'ja',
   /** アクセス解析。Cloudflare Web Analytics のトークンを入れると計測が有効になる */
   cfAnalyticsToken: '',
   /** Google Analytics 4 の測定ID（G-XXXXXXXXXX）。空なら計測しない */
   gaId: '',
+  /** Google Search Console のサイト所有権確認 */
+  googleSiteVerification: 'YvevDsFY1R6b9T_svBXNd1dfgbavtICCqXf5suQHcRs',
 } as const;
 
 /** 1ページあたりの記事数 */

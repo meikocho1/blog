@@ -37,6 +37,9 @@ const pageTitle = type === 'article' ? `${title} | ${SITE.title}` : SITE.title;
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
     <meta name="author" content={SITE.author} />
+    {SITE.googleSiteVerification && (
+      <meta name="google-site-verification" content={SITE.googleSiteVerification} />
+    )}
     <link rel="canonical" href={canonical} />
     <link rel="alternate" type="application/rss+xml" title={SITE.title} href={`${base}/rss.xml`} />
 
