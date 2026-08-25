@@ -1,0 +1,76 @@
+---
+import { topicCounts } from '../posts';
+
+interface Props {
+  /** 現在表示中のトピック。タブのハイライトに使う */
+  current?: string;
+  /** 検索ボックスを出すか（トップのみ） */
+  search?: boolean;
+}
+const { current, search = false } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const tabs = (await topicCounts()).slice(0, 8);
+---
+
+<nav class="nav">
+  {
+    search && (
+      <input
+        id="q"
+        class="q"
+        type="search"
+        placeholder="記事を検索"
+        autocomplete="off"
+        aria-label="記事を検索"
+      />
+    )
+  }
+  <div class="tabs">
+    <a class:list={['tab', { on: !current }]} href={`${base}/`}>すべて</a>
+    {
+      tabs.map((t) => (
+        <a
+          class:list={['tab', { on: current === t.topic }]}
+          href={`${base}/topics/${encodeURIComponent(t.topic)}/`}
+        >
+          {t.topic}
+          <span class="n">{t.count}</span>
+        </a>
+      ))
+    }
+    <a class="tab more" href={`${base}/topics/`}>すべてのトピック →</a>
+  </div>
+</nav>
+
+<style>
+  .nav { margin-bottom: 8px; }
+  .q {
+    width: 100%;
+    padding: 9px 12px;
+    margin-bottom: 14px;
+    font-size: 14px;
+    font-family: inherit;
+    color: var(--fg);
+    background: var(--msg-bg);
+    border: 1px solid transparent;
+    border-radius: 8px;
+  }
+  .q:focus { outline: none; border-color: var(--accent); }
+  .tabs { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tab {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 5px;
+    padding: 4px 11px;
+    font-size: 13px;
+    text-decoration: none;
+    color: var(--muted);
+    background: var(--msg-bg);
+    border-radius: 999px;
+  }
+  .tab:hover { color: var(--fg); }
+  .tab.on { color: var(--bg); background: var(--fg); }
+  .tab .n { font-size: 11px; opacity: 0.65; font-variant-numeric: tabular-nums; }
+  .tab.more { background: none; padding-left: 6px; }
+  .tab.more:hover { color: var(--accent); }
+</style>

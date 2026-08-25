@@ -1,0 +1,40 @@
+---
+import Base from '../../layouts/Base.astro';
+import { topicCounts, SITE } from '../../posts';
+
+const topics = await topicCounts();
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const description = `${SITE.title}のトピック一覧（${topics.length} 件）。`;
+---
+
+<Base title="トピック一覧" description={description}>
+  <h1>トピック</h1>
+  <p class="none">{topics.length} 件</p>
+  <div class="cloud">
+    {
+      topics.map((t) => (
+        <a class="tab" href={`${base}/topics/${encodeURIComponent(t.topic)}/`}>
+          {t.topic}
+          <span class="n">{t.count}</span>
+        </a>
+      ))
+    }
+  </div>
+
+  <style>
+    .cloud { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+    .tab {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 6px;
+      padding: 6px 13px;
+      font-size: 14px;
+      text-decoration: none;
+      color: var(--muted);
+      background: var(--msg-bg);
+      border-radius: 999px;
+    }
+    .tab:hover { color: var(--fg); }
+    .tab .n { font-size: 11px; opacity: 0.65; font-variant-numeric: tabular-nums; }
+  </style>
+</Base>

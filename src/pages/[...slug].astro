@@ -24,9 +24,12 @@ const jsonLd = {
   url,
   mainEntityOfPage: url,
   inLanguage: SITE.lang,
-  author: { '@type': 'Person', name: SITE.author },
+  author: { '@type': 'Person', name: SITE.author, url: SITE.authorUrl },
+  publisher: { '@type': 'Person', name: SITE.author, url: SITE.authorUrl },
   keywords: post.data.topics.join(', '),
-  ...(post.data.published_at ? { datePublished: post.data.published_at } : {}),
+  ...(post.data.published_at
+    ? { datePublished: post.data.published_at, dateModified: post.data.published_at }
+    : {}),
   ...(image ? { image: new URL(base + image, Astro.site).href } : {}),
 };
 ---
@@ -44,13 +47,17 @@ const jsonLd = {
     <h1>{post.data.emoji ?? '📝'} {post.data.title}</h1>
     <div class="meta">
       {post.data.published_at && <time datetime={post.data.published_at}>{post.data.published_at}</time>}
-      {post.data.topics.map((t) => <span class="tag">{t}</span>)}
+      {post.data.topics.map((t) => (
+        <a class="tag" href={`${base}/topics/${encodeURIComponent(t)}/`}>{t}</a>
+      ))}
     </div>
     <Content />
   </article>
 
   <style>
     .meta { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 40px; font-size: 12px; color: var(--muted); }
+    .tag { color: var(--muted); text-decoration: none; }
+    .tag:hover { color: var(--accent); }
     .tag::before { content: '#'; }
   </style>
 </Base>

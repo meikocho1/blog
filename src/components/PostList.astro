@@ -1,0 +1,33 @@
+---
+import { excerpt } from '../posts';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  posts: CollectionEntry<'articles'>[];
+}
+const { posts } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+
+<ul class="list">
+  {
+    posts.map((p) => (
+      <li>
+        <a class="head" href={`${base}/${p.id}/`}>
+          <span class="emoji">{p.data.emoji ?? '📝'}</span>
+          <span class="title">{p.data.title}</span>
+        </a>
+        <p class="excerpt">{excerpt(p.body ?? '', 90)}</p>
+        <div class="meta">
+          {p.data.published_at && <time datetime={p.data.published_at}>{p.data.published_at}</time>}
+          {p.data.topics.map((t) => (
+            <a class="tag" href={`${base}/topics/${encodeURIComponent(t)}/`}>
+              {t}
+            </a>
+          ))}
+        </div>
+      </li>
+    ))
+  }
+</ul>
+

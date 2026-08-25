@@ -1,0 +1,48 @@
+---
+import Base from '../../layouts/Base.astro';
+import Nav from '../../components/Nav.astro';
+import PostList from '../../components/PostList.astro';
+import { publishedPosts, SITE } from '../../posts';
+
+export async function getStaticPaths() {
+  const posts = await publishedPosts();
+  const byTopic = new Map<string, typeof posts>();
+  for (const p of posts) {
+    for (const t of p.data.topics) {
+      byTopic.set(t, [...(byTopic.get(t) ?? []), p]);
+    }
+  }
+  return [...byTopic].map(([topic, items]) => ({ params: { topic }, props: { topic, items } }));
+}
+
+const { topic, items } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const title = `${topic} の記事`;
+const description = `${topic} に関する記事 ${items.length} 本。${SITE.description}`;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: title,
+  description,
+  url: new URL(`${base}/topics/${encodeURIComponent(topic)}/`, Astro.site).href,
+  inLanguage: SITE.lang,
+  hasPart: items.map((p) => ({
+    '@type': 'BlogPosting',
+    headline: p.data.title,
+    url: new URL(`${base}/${p.id}/`, Astro.site).href,
+  })),
+};
+---
+
+<Base title={title} description={description} jsonLd={jsonLd}>
+  <h1>#{topic}</h1>
+  <p class="none">{items.length} 本</p>
+  <Nav current={topic} />
+  <PostList posts={items} />
+
+  <style>
+    h1 { margin-bottom: 4px; }
+    .none { margin-bottom: 18px; }
+  </style>
+</Base>

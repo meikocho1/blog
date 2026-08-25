@@ -1,0 +1,31 @@
+---
+import Base from '../../layouts/Base.astro';
+import Nav from '../../components/Nav.astro';
+import PostList from '../../components/PostList.astro';
+import { publishedPosts, SITE, PER_PAGE } from '../../posts';
+import type { GetStaticPaths } from 'astro';
+
+export const getStaticPaths = (async ({ paginate }) => {
+  const posts = await publishedPosts();
+  // 1ページ目はトップと重複するので生成しない
+  return paginate(posts, { pageSize: PER_PAGE }).filter((r) => r.params.page !== '1');
+}) satisfies GetStaticPaths;
+
+const { page } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const prev = page.currentPage === 2 ? `${base}/` : `${base}/page/${page.currentPage - 1}/`;
+---
+
+<Base
+  title={`記事一覧 ${page.currentPage} / ${page.lastPage}`}
+  description={`${SITE.description}（${page.currentPage} ページ目）`}
+  type="article"
+>
+  <Nav />
+  <PostList posts={page.data} />
+  <nav class="pager">
+    {page.currentPage > 1 ? <a href={prev}>← 前へ</a> : <span />}
+    <span>{page.currentPage} / {page.lastPage}</span>
+    {page.url.next ? <a href={`${base}/page/${page.currentPage + 1}/`}>次へ →</a> : <span />}
+  </nav>
+</Base>

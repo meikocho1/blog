@@ -10,6 +10,8 @@ export const collections = {
       type: z.string().optional(),
       topics: z.array(z.string()).default([]),
       published: z.boolean().default(false),
+      /** ブログ側だけの非公開フラグ（Zenn の published とは独立） */
+      draft: z.boolean().default(false),
       published_at: z.string().optional(),
     }),
   }),

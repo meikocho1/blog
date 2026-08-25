@@ -1,9 +1,23 @@
 ---
 import Base from '../layouts/Base.astro';
-import { publishedPosts, excerpt, SITE } from '../posts';
+import Nav from '../components/Nav.astro';
+import PostList from '../components/PostList.astro';
+import { publishedPosts, excerpt, SITE, PER_PAGE } from '../posts';
 
 const posts = await publishedPosts();
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const page1 = posts.slice(0, PER_PAGE);
+const lastPage = Math.max(1, Math.ceil(posts.length / PER_PAGE));
+
+// クライアント検索用の索引（数十件なので丸ごと埋め込む）
+const index = posts.map((p) => ({
+  t: p.data.title,
+  u: `${base}/${p.id}/`,
+  e: p.data.emoji ?? '📝',
+  d: p.data.published_at ?? '',
+  g: p.data.topics,
+  s: excerpt(p.body ?? '', 90),
+}));
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -12,38 +26,95 @@ const jsonLd = {
   description: SITE.description,
   url: new URL(`${base}/`, Astro.site).href,
   inLanguage: SITE.lang,
-  author: { '@type': 'Person', name: SITE.author },
+  author: { '@type': 'Person', name: SITE.author, url: SITE.authorUrl },
 };
 ---
 
 <Base title={SITE.title} jsonLd={jsonLd}>
-  <ul class="list">
+  <section class="hero">
+    <img class="hero-avatar" src={base + SITE.avatar} alt="すみと黒" width="84" height="84" loading="eager" />
+    <div>
+      <h1>すみ<span class="amp">と</span>黒</h1>
+      <p class="bio">{SITE.bio}</p>
+    </div>
+  </section>
+
+  <Nav search />
+
+  <div id="results" hidden></div>
+
+  <div id="server-list">
+    <PostList posts={page1} />
     {
-      posts.map((p) => (
-        <li>
-          <a href={`${base}/${p.id}/`}>
-            <span class="emoji">{p.data.emoji ?? '📝'}</span>
-            <span class="title">{p.data.title}</span>
-          </a>
-          <p class="excerpt">{excerpt(p.body ?? '', 90)}</p>
-          <div class="meta">
-            {p.data.published_at && <time datetime={p.data.published_at}>{p.data.published_at}</time>}
-            {p.data.topics.map((t) => <span class="tag">{t}</span>)}
-          </div>
-        </li>
-      ))
+      lastPage > 1 && (
+        <nav class="pager">
+          <span>1 / {lastPage}</span>
+          <a href={`${base}/page/2/`}>次へ →</a>
+        </nav>
+      )
     }
-  </ul>
-  {posts.length === 0 && <p>公開中の記事はまだありません。</p>}
+  </div>
+
+  <script is:inline set:html={`window.__POSTS__ = ${JSON.stringify(index)};`} />
+  <script>
+    const q = document.getElementById('q') as HTMLInputElement | null;
+    const results = document.getElementById('results')!;
+    const serverList = document.getElementById('server-list')!;
+    const posts = (window as any).__POSTS__ as {
+      t: string;
+      u: string;
+      e: string;
+      d: string;
+      g: string[];
+      s: string;
+    }[];
+
+    const esc = (s: string) =>
+      s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
+
+    function render(hits: typeof posts, query: string) {
+      if (!hits.length) {
+        results.innerHTML = `<p class="none">「${esc(query)}」に一致する記事はありません。</p>`;
+        return;
+      }
+      results.innerHTML =
+        `<p class="none">${hits.length} 件</p><ul class="list">` +
+        hits
+          .map(
+            (p) => `<li>
+            <a class="head" href="${p.u}"><span class="emoji">${p.e}</span><span class="title">${esc(p.t)}</span></a>
+            <p class="excerpt">${esc(p.s)}</p>
+            <div class="meta">${p.d ? `<time datetime="${p.d}">${p.d}</time>` : ''}${p.g
+              .map((t) => `<span class="tag">${esc(t)}</span>`)
+              .join('')}</div>
+          </li>`,
+          )
+          .join('') +
+        '</ul>';
+    }
+
+    q?.addEventListener('input', () => {
+      const query = q.value.trim();
+      if (!query) {
+        results.hidden = true;
+        serverList.hidden = false;
+        return;
+      }
+      const lower = query.toLowerCase();
+      const hits = posts.filter((p) =>
+        `${p.t} ${p.s} ${p.g.join(' ')}`.toLowerCase().includes(lower),
+      );
+      render(hits, query);
+      results.hidden = false;
+      serverList.hidden = true;
+    });
+  </script>
 
   <style>
-    .list { list-style: none; padding: 0; margin: 0; }
-    .list li { padding: 20px 0; border-bottom: 1px solid var(--line); }
-    .list a { display: flex; gap: 10px; text-decoration: none; color: var(--fg); font-weight: 600; line-height: 1.6; }
-    .list a:hover .title { color: var(--accent); }
-    .emoji { flex: none; }
-    .excerpt { margin: 6px 0 0; font-size: 14px; color: var(--muted); line-height: 1.7; }
-    .meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; font-size: 12px; color: var(--muted); }
-    .tag::before { content: '#'; }
+    .hero { display: flex; align-items: center; gap: 18px; margin-bottom: 32px; }
+    .hero-avatar { border-radius: 50%; flex: none; background: var(--msg-bg); }
+    .hero h1 { font-size: 1.35rem; margin: 0 0 6px; }
+    .amp { color: var(--muted); font-weight: 400; margin: 0 2px; }
+    .bio { margin: 0; font-size: 14px; color: var(--muted); line-height: 1.7; }
   </style>
 </Base>
