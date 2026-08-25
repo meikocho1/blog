@@ -3,7 +3,8 @@ title: "5つのルールのうち、制約は1つしかない — Anthropic の�
 emoji: "🧭"
 type: "idea"
 topics: ["ai", "claudecode", "エージェント", "スタートアップ", "開発プロセス"]
-published: false
+published: true
+published_at: "2026-08-25"
 source: blog-essay
 audience: engineer
 ---

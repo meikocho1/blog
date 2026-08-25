@@ -4,6 +4,7 @@ emoji: "💸"
 type: "idea"
 topics: ["ai", "chatgpt", "bitcoin", "ファイナンス", "llm"]
 published: true
+published_at: "2026-08-16"
 source: podcast
 audience: engineer
 ---

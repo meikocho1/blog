@@ -4,6 +4,7 @@ emoji: "🕸️"
 type: "idea"
 topics: ["claudecode", "ai", "claude", "llm", "設計"]
 published: true
+published_at: "2026-08-01"
 source: x-article
 audience: engineer
 ---

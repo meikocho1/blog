@@ -3,7 +3,8 @@ title: "サブエージェントを切ったらコミットが増えた — 2GB�
 emoji: "🧾"
 type: "idea"
 topics: ["ai", "llm", "claudecode", "エージェント", "コンテキストエンジニアリング"]
-published: false
+published: true
+published_at: "2026-08-24"
 source: blog-essay
 audience: engineer
 ---

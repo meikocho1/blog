@@ -4,6 +4,7 @@ emoji: "🔍"
 type: "idea"
 topics: ["rag", "ai", "llm", "claudecode", "検索"]
 published: true
+published_at: "2026-08-02"
 source: x-article
 audience: engineer
 ---

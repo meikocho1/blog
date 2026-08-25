@@ -1,0 +1,131 @@
+---
+import { SITE } from '../posts';
+
+interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+  type?: 'website' | 'article';
+  publishedAt?: string;
+  topics?: string[];
+  jsonLd?: Record<string, unknown>;
+}
+
+const {
+  title,
+  description = SITE.description,
+  image,
+  type = 'website',
+  publishedAt,
+  topics = [],
+  jsonLd,
+} = Astro.props;
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const home = `${base}/`;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const ogImage = image ? new URL(base + image, Astro.site).href : undefined;
+const pageTitle = type === 'article' ? `${title} | ${SITE.title}` : SITE.title;
+---
+
+<!doctype html>
+<html lang={SITE.lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content={SITE.author} />
+    <link rel="canonical" href={canonical} />
+    <link rel="alternate" type="application/rss+xml" title={SITE.title} href={`${base}/rss.xml`} />
+
+    <meta property="og:site_name" content={SITE.title} />
+    <meta property="og:type" content={type} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content="ja_JP" />
+    {ogImage && <meta property="og:image" content={ogImage} />}
+    {publishedAt && <meta property="article:published_time" content={publishedAt} />}
+    {topics.map((t) => <meta property="article:tag" content={t} />)}
+
+    <meta name="twitter:card" content={ogImage ? 'summary_large_image' : 'summary'} />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    {ogImage && <meta name="twitter:image" content={ogImage} />}
+
+    {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
+
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='14'>📝</text></svg>" />
+  </head>
+  <body>
+    <header>
+      <a href={home}>{SITE.title}</a>
+    </header>
+    <main>
+      <slot />
+    </main>
+    <footer>
+      <a href={`${base}/rss.xml`}>RSS</a> · © {SITE.author}
+    </footer>
+
+    <style is:global>
+      :root {
+        --fg: #1a1a1a;
+        --muted: #666;
+        --line: #e3e3e3;
+        --accent: #2563eb;
+        --bg: #fff;
+        --msg-bg: #f3f5f7;
+        --alert-bg: #fdf0f0;
+        --alert-line: #d9534f;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --fg: #e6e6e6;
+          --muted: #9aa0a6;
+          --line: #333;
+          --accent: #7aa2f7;
+          --bg: #16181d;
+          --msg-bg: #21242b;
+          --alert-bg: #3a2224;
+          --alert-line: #e06c75;
+        }
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--fg);
+        font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Noto Sans JP', sans-serif;
+        line-height: 1.8;
+        font-size: 16px;
+      }
+      header, main, footer { max-width: 720px; margin: 0 auto; padding: 0 20px; }
+      header { padding-top: 32px; padding-bottom: 24px; }
+      header a { font-weight: 700; text-decoration: none; color: var(--fg); }
+      footer { color: var(--muted); font-size: 13px; padding-top: 48px; padding-bottom: 48px; }
+      a { color: var(--accent); }
+      h1 { font-size: 1.7rem; line-height: 1.5; margin: 0 0 8px; }
+      h2 { font-size: 1.3rem; margin: 2.4em 0 0.6em; padding-bottom: 6px; border-bottom: 1px solid var(--line); }
+      h3 { font-size: 1.1rem; margin: 2em 0 0.5em; }
+      img { max-width: 100%; height: auto; }
+      pre { padding: 14px 16px; border-radius: 8px; overflow-x: auto; font-size: 13.5px; line-height: 1.6; }
+      code { font-size: 0.9em; }
+      :not(pre) > code { background: var(--msg-bg); padding: 2px 5px; border-radius: 4px; }
+      blockquote { margin: 1.4em 0; padding: 2px 16px; border-left: 4px solid var(--line); color: var(--muted); }
+      table { border-collapse: collapse; width: 100%; display: block; overflow-x: auto; font-size: 14px; }
+      th, td { border: 1px solid var(--line); padding: 6px 10px; text-align: left; }
+      hr { border: 0; border-top: 1px solid var(--line); margin: 2.5em 0; }
+      aside.msg {
+        background: var(--msg-bg);
+        border-radius: 8px;
+        padding: 14px 18px;
+        margin: 1.6em 0;
+      }
+      aside.msg.alert { background: var(--alert-bg); border-left: 4px solid var(--alert-line); }
+      aside.msg > :first-child { margin-top: 0; }
+      aside.msg > :last-child { margin-bottom: 0; }
+    </style>
+  </body>
+</html>

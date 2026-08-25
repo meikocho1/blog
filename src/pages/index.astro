@@ -1,0 +1,49 @@
+---
+import Base from '../layouts/Base.astro';
+import { publishedPosts, excerpt, SITE } from '../posts';
+
+const posts = await publishedPosts();
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Blog',
+  name: SITE.title,
+  description: SITE.description,
+  url: new URL(`${base}/`, Astro.site).href,
+  inLanguage: SITE.lang,
+  author: { '@type': 'Person', name: SITE.author },
+};
+---
+
+<Base title={SITE.title} jsonLd={jsonLd}>
+  <ul class="list">
+    {
+      posts.map((p) => (
+        <li>
+          <a href={`${base}/${p.id}/`}>
+            <span class="emoji">{p.data.emoji ?? '📝'}</span>
+            <span class="title">{p.data.title}</span>
+          </a>
+          <p class="excerpt">{excerpt(p.body ?? '', 90)}</p>
+          <div class="meta">
+            {p.data.published_at && <time datetime={p.data.published_at}>{p.data.published_at}</time>}
+            {p.data.topics.map((t) => <span class="tag">{t}</span>)}
+          </div>
+        </li>
+      ))
+    }
+  </ul>
+  {posts.length === 0 && <p>公開中の記事はまだありません。</p>}
+
+  <style>
+    .list { list-style: none; padding: 0; margin: 0; }
+    .list li { padding: 20px 0; border-bottom: 1px solid var(--line); }
+    .list a { display: flex; gap: 10px; text-decoration: none; color: var(--fg); font-weight: 600; line-height: 1.6; }
+    .list a:hover .title { color: var(--accent); }
+    .emoji { flex: none; }
+    .excerpt { margin: 6px 0 0; font-size: 14px; color: var(--muted); line-height: 1.7; }
+    .meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; font-size: 12px; color: var(--muted); }
+    .tag::before { content: '#'; }
+  </style>
+</Base>

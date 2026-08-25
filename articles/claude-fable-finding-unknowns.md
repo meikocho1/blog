@@ -4,6 +4,7 @@ emoji: "🗺️"
 type: "idea"
 topics: ["claudecode", "ai", "llm", "claude", "生成ai"]
 published: true
+published_at: "2026-07-25"
 source: claude-code-blog
 audience: engineer
 ---

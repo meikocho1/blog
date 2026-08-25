@@ -4,6 +4,7 @@ emoji: "🚪"
 type: "idea"
 topics: ["cloudflare", "ai", "llm", "mcp", "セキュリティ"]
 published: true
+published_at: "2026-08-06"
 source: cloudflare-blog
 audience: engineer
 ---

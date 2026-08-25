@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "side-tab",
+        "value": "*",
+        "files": [
+          "src/layouts/Base.astro"
+        ],
+        "createdAt": "2026-08-25T08:16:00.205Z",
+        "reason": "Claude: blockquote の left border は Markdown 記事の標準タイポグラフィ慣習、aside.msg.alert は Zenn の :::message alert 表示を意図的に再現したもの（カードのアクセントタブではない）"
+      }
+    ]
+  }
+}

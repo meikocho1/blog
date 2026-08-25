@@ -4,6 +4,7 @@ emoji: "🔌"
 type: "idea"
 topics: ["mcp", "claude", "ai", "llm", "設計"]
 published: true
+published_at: "2026-07-30"
 source: claude-code-blog
 audience: engineer
 ---

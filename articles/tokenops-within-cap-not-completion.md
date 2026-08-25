@@ -3,7 +3,8 @@ title: "「完了率が67%→96%」は、たぶんあなたが思っている実
 emoji: "🧮"
 type: "idea"
 topics: ["ai", "llm", "エージェント", "finops", "コンテキストエンジニアリング"]
-published: false
+published: true
+published_at: "2026-08-24"
 source: blog-essay
 audience: engineer
 ---

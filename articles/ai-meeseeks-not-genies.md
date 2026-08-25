@@ -4,6 +4,7 @@ emoji: "🧞"
 type: "idea"
 topics: ["ai", "llm", "エージェント", "セキュリティ", "openai"]
 published: true
+published_at: "2026-08-16"
 source: blog-essay
 audience: engineer
 ---

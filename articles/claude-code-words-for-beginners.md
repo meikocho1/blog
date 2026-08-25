@@ -4,6 +4,7 @@ emoji: "🔰"
 type: "idea"
 topics: ["claude", "claudecode", "ai", "cli", "初心者"]
 published: true
+published_at: "2026-07-25"
 source: original
 audience: office-worker
 ---
