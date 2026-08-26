@@ -21,12 +21,14 @@ emoji: "..."
 type: "idea"
 topics: [...]
 published: false
+draft: true
 source: original または x-article 等
 audience: engineer
 ---
 ```
 
-- **必ず `published: false`（下書き）にする**
+- **必ず `published: false`（Zenn 下書き）と `draft: true`（ブログ非掲載）の両方を書く**
+  - `published` は Zenn 用、`draft` はブログ用で独立している。`draft` を書き忘れるとブログに即公開される
 - 元ソースの要約で終わらせず、「私の見解」に相当する自分の分析・考察の章を必ず立てる
 - 出典（URL・著者・日付）を明記する
 
