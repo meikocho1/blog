@@ -4,6 +4,7 @@ emoji: "🔁"
 type: "idea"
 topics: ["ai", "claudecode", "エージェント", "スキル", "開発プロセス"]
 published: false
+published_at: "2026-08-28"
 source: blog-essay
 audience: engineer
 ---
