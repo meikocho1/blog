@@ -3,7 +3,7 @@ title: "1,000個のMCPツールをコンテキストから追い出した — Ub
 emoji: "🏭"
 type: "idea"
 topics: ["ai", "llm", "mcp", "エージェント", "コンテキストエンジニアリング"]
-published: false
+published: true
 published_at: "2026-08-31"
 source: blog-essay
 audience: engineer

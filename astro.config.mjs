@@ -1,7 +1,29 @@
+import fs from 'node:fs';
+import path from 'node:path';
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 
 const base = '/blog';
+
+// Zenn に公開済み（published: true）の記事はブログ側を noindex にしているので、
+// sitemap にも載せない。noindex と sitemap 掲載が矛盾するのを避ける。
+const ARTICLES_DIR = new URL('./articles', import.meta.url).pathname;
+const zennPublished = new Set(
+  fs
+    .readdirSync(ARTICLES_DIR)
+    .filter((f) => f.endsWith('.md'))
+    .filter((f) => {
+      const fm = /^---\n([\s\S]*?)\n---/.exec(fs.readFileSync(path.join(ARTICLES_DIR, f), 'utf8'));
+      return fm ? /^published:\s*true\s*$/m.test(fm[1]) : false;
+    })
+    .map((f) => f.replace(/\.md$/, '')),
+);
+
+/** `https://host/blog/<slug>/` のときだけ slug を返す（一覧やトピックページは対象外） */
+function articleSlug(pageUrl) {
+  const seg = new URL(pageUrl).pathname.replace(/\/$/, '').split('/').filter(Boolean);
+  return seg.length === 2 && seg[0] === 'blog' ? seg[1] : null;
+}
 
 const OPEN_RE = /^:::message([ \t]+alert)?(\n|$)/;
 
@@ -77,7 +99,14 @@ function rehypeBaseImages() {
 export default defineConfig({
   site: 'https://meikocho1.github.io',
   base,
-  integrations: [sitemap()],
+  integrations: [
+    sitemap({
+      filter: (page) => {
+        const slug = articleSlug(page);
+        return slug === null || !zennPublished.has(slug);
+      },
+    }),
+  ],
   markdown: {
     remarkPlugins: [remarkZennMessage],
     rehypePlugins: [rehypeBaseImages],

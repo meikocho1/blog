@@ -3,7 +3,7 @@ title: "\"self-improving\" は自動下書きのことだった — Warp のス�
 emoji: "🔁"
 type: "idea"
 topics: ["ai", "claudecode", "エージェント", "スキル", "開発プロセス"]
-published: false
+published: true
 published_at: "2026-08-28"
 source: blog-essay
 audience: engineer

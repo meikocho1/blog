@@ -42,6 +42,7 @@ const jsonLd = {
   publishedAt={post.data.published_at}
   topics={post.data.topics}
   jsonLd={jsonLd}
+  noindex={post.data.published === true}
 >
   <article>
     <h1>{post.data.emoji ?? '📝'} {post.data.title}</h1>
