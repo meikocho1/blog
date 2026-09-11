@@ -3,8 +3,9 @@ title: "Agentで個人ブログを回している"
 emoji: "🔁"
 type: "idea"
 topics: ["ai", "claudecode", "エージェント", "ブログ", "zenn"]
-published: true
+published: false
 published_at: "2026-09-12"
+draft: true
 source: blog-essay
 audience: engineer
 ---
