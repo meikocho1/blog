@@ -1,5 +1,5 @@
 ---
-title: "ChatGPT Proの記事は星の数まで合っていた。処方だけが成り立たない"
+title: "ChatGPT Proの解説記事を検証した"
 emoji: "⭐"
 type: "idea"
 topics: ["ai", "llm", "openai", "codex", "chatgpt"]

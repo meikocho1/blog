@@ -1,5 +1,5 @@
 ---
-title: "6体のボットチームは、プロファイル6つとsqliteのボードだった"
+title: "Hermesの6ボット構成について"
 emoji: "🗂️"
 type: "idea"
 topics: ["ai", "llm", "エージェント", "oss", "設計"]

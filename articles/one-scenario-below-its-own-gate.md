@@ -1,5 +1,5 @@
 ---
-title: "Spotifyのトークン90%削減を、コミットされたベンチマークで確かめた"
+title: "Spotifyのshuntのベンチマークを読む"
 emoji: "🚰"
 type: "idea"
 topics: ["ai", "llm", "claudecode", "エージェント", "コンテキストエンジニアリング"]
