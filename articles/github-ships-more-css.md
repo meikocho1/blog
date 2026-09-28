@@ -3,8 +3,8 @@ title: "GitHub の「CSS を増やして速くした」を npm の配布物で�
 emoji: "🧵"
 type: "idea"
 topics: ["css", "react", "performance", "github", "frontend"]
-published: false
-draft: true
+published: true
+published_at: "2026-09-28"
 source: github-blog
 audience: engineer
 ---
