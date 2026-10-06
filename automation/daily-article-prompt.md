@@ -34,12 +34,12 @@ audience: engineer
 
 ## 3. 挿絵の生成
 
-`sumi-illustrations` skill を Skill ツールで読み込み、記事本文に 3〜5 枚の挿絵を生成して `images/<スラッグ>/` に保存し、記事本文に埋め込む。画像生成は `codex-image` skill の手順（`codex exec`）に従う。
+`sumi-illustrations` skill を Skill ツールで読み込み、記事本文に 3〜5 枚の挿絵を生成して `images/<スラッグ>/` に保存し、記事本文に埋め込む。画像生成は `codex-image` skill の手順に従うが、`codex exec` は直接呼ばず、必ず `automation/codex-image.sh '<プロンプト全文>'`（引数はプロンプト1つだけ）で呼ぶ。この実行では `codex exec` を直接呼ぶ権限がない。
 
 ## 4. 禁止事項
 
 - **git 操作（add / commit / push / branch 等）は一切行わない**。下書きファイルを置くだけで終了する
-- `articles/` `images/` `automation/` 以外のリポジトリ内ファイルを変更しない
+- `articles/` `images/` 以外のリポジトリ内ファイルを変更しない
 - 既存記事の編集・削除をしない
 
 ## 5. 終了報告

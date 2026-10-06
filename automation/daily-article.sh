@@ -39,17 +39,27 @@ cd "$REPO" || exit 1
 # 許可外の Bash は拒否されるだけで実行自体は続くので、最悪でも「挿絵が減る」で済む。
 # caffeinate -is: 実行中（約20分）のアイドルスリープ／システムスリープを抑止する。
 # ただしフタを閉じたスリープは userland では止められない → その場合は上のリトライで拾う。
+# ファイルの書き込みも同じ理由でホワイトリストにする。acceptEdits はリポジトリ全体の書き込みを
+# 自動承認するので、automation/ や .claude/settings.json（フック）を書き換えられ、翌朝その中身が
+# 権限の外で実行されてしまう。Edit(...) のパス規則は Write にも効く（Write(...) は参照されない）。
+# --setting-sources user: .claude/settings.local.json の対話用の許可（python3 * や rtk git * など）が
+# ここに合流すると、上のホワイトリストが意味をなさなくなるため読ませない。
+# --add-dir: 作業ディレクトリ外の generated_images からの cp は、これがないと拒否される。
+# rtk の PreToolUse フックが ls / find を `rtk ls` / `rtk find` に書き換えるので、両方の形を許可する。
 caffeinate -is claude -p "$(cat "$REPO/automation/daily-article-prompt.md")" \
-  --permission-mode acceptEdits \
+  --setting-sources user \
+  --add-dir /Users/akimitu/.codex/generated_images \
   --allowedTools \
-    "WebSearch" "WebFetch" "Read" "Write" "Edit" "Glob" "Grep" "Skill" \
-    "Bash(codex exec:*)" \
+    "WebSearch" "WebFetch" "Read" "Glob" "Grep" "Skill" \
+    "Edit(/articles/**)" "Edit(/images/**)" \
+    "Bash(automation/codex-image.sh:*)" \
     "Bash(codex features list)" \
     "Bash(command -v codex)" \
     "Bash(find /Users/akimitu/.codex/generated_images:*)" \
-    "Bash(cp /Users/akimitu/.codex/generated_images/:*)" \
-    "Bash(mkdir -p images/:*)" \
-    "Bash(ls:*)" \
+    "Bash(rtk find /Users/akimitu/.codex/generated_images:*)" \
+    "Bash(cp /Users/akimitu/.codex/generated_images/* images/*)" \
+    "Bash(mkdir -p images/*)" \
+    "Bash(ls:*)" "Bash(rtk ls:*)" \
   --disallowedTools "Bash(git:*)" "Bash(curl:*)" "Bash(rm:*)" \
   >> "$LOG_DIR/$TODAY.log" 2>&1
 
