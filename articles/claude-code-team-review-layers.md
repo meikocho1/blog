@@ -3,8 +3,8 @@ title: "Claude Code チームのレビュー6層"
 emoji: "🧱"
 type: "idea"
 topics: ["ai", "llm", "コードレビュー", "claudecode", "開発生産性"]
-published: false
-draft: true
+published: true
+published_at: "2026-10-17"
 source: claude-code-blog
 audience: engineer
 ---
