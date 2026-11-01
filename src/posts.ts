@@ -22,6 +22,14 @@ export const LANGS = {
 } as const;
 export type Lang = keyof typeof LANGS;
 
+/** 画面の文言。ja はトップ・一覧、en/zh は言語別トップで使う */
+export const UI = {
+  ja: { htmlLang: 'ja', label: '日本語', home: '/', bio: SITE.bio, search: '記事を検索', count: '件', none: '「{q}」に一致する記事はありません。', offer: '' },
+  en: { htmlLang: 'en', label: 'English', home: '/en/', bio: 'A space where I look into topics that catch my interest and write up notes in my own way. Supervised by Kuro (a cat). Articles are translated from the Japanese originals.', search: 'Search articles', count: 'results', none: 'No articles match “{q}”.', offer: 'This article is also available in English' },
+  zh: { htmlLang: 'zh-CN', label: '中文', home: '/zh/', bio: '把感兴趣的话题按自己的方式整理成笔记的地方。监修：黑（猫）。文章译自日语原文。', search: '搜索文章', count: '篇', none: '没有与“{q}”匹配的文章。', offer: '本文也有中文版' },
+} as const;
+export type UiLang = keyof typeof UI;
+
 /** 翻訳記事。日本語版がブログに出ているものだけ返す（draft の翻訳を漏らさない） */
 export async function translatedPosts(lang?: Lang) {
   const visible = new Set((await publishedPosts()).map((p) => p.id));

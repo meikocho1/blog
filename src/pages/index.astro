@@ -2,7 +2,8 @@
 import Base from '../layouts/Base.astro';
 import Nav from '../components/Nav.astro';
 import PostList from '../components/PostList.astro';
-import { publishedPosts, excerpt, SITE, PER_PAGE } from '../posts';
+import SearchScript from '../components/SearchScript.astro';
+import { publishedPosts, excerpt, SITE, UI, PER_PAGE } from '../posts';
 
 const posts = await publishedPosts();
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
@@ -55,60 +56,7 @@ const jsonLd = {
     }
   </div>
 
-  <script is:inline set:html={`window.__POSTS__ = ${JSON.stringify(index)};`} />
-  <script>
-    const q = document.getElementById('q') as HTMLInputElement | null;
-    const results = document.getElementById('results')!;
-    const serverList = document.getElementById('server-list')!;
-    const posts = (window as any).__POSTS__ as {
-      t: string;
-      u: string;
-      e: string;
-      d: string;
-      g: string[];
-      s: string;
-    }[];
-
-    const esc = (s: string) =>
-      s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
-
-    function render(hits: typeof posts, query: string) {
-      if (!hits.length) {
-        results.innerHTML = `<p class="none">「${esc(query)}」に一致する記事はありません。</p>`;
-        return;
-      }
-      results.innerHTML =
-        `<p class="none">${hits.length} 件</p><ul class="list">` +
-        hits
-          .map(
-            (p) => `<li>
-            <a class="head" href="${p.u}"><span class="emoji">${p.e}</span><span class="title">${esc(p.t)}</span></a>
-            <p class="excerpt">${esc(p.s)}</p>
-            <div class="meta">${p.d ? `<time datetime="${p.d}">${p.d}</time>` : ''}${p.g
-              .map((t) => `<span class="tag">${esc(t)}</span>`)
-              .join('')}</div>
-          </li>`,
-          )
-          .join('') +
-        '</ul>';
-    }
-
-    q?.addEventListener('input', () => {
-      const query = q.value.trim();
-      if (!query) {
-        results.hidden = true;
-        serverList.hidden = false;
-        return;
-      }
-      const lower = query.toLowerCase();
-      const hits = posts.filter((p) =>
-        `${p.t} ${p.s} ${p.g.join(' ')}`.toLowerCase().includes(lower),
-      );
-      render(hits, query);
-      results.hidden = false;
-      serverList.hidden = true;
-    });
-  </script>
+  <SearchScript index={index} count={UI.ja.count} none={UI.ja.none} />
 
   <style>
     .hero { display: flex; align-items: center; gap: 18px; margin-bottom: 32px; }

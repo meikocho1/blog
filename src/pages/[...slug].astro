@@ -1,7 +1,6 @@
 ---
 import { render } from 'astro:content';
 import Base from '../layouts/Base.astro';
-import LangSwitch from '../components/LangSwitch.astro';
 import { publishedPosts, excerpt, firstImage, alternatesFor, SITE } from '../posts';
 
 export async function getStaticPaths() {
@@ -55,7 +54,6 @@ const jsonLd = {
         <a class="tag" href={`${base}/topics/${encodeURIComponent(t)}/`}>{t}</a>
       ))}
     </div>
-    <LangSwitch alternates={alternates} current="ja" />
     <Content />
   </article>
 

@@ -1,0 +1,61 @@
+---
+/**
+ * #q に入力された語で記事を絞り込み、#results に描く。#server-list はそのあいだ隠す。
+ * 索引は数十件なので丸ごと埋め込む。
+ */
+interface Props {
+  index: { t: string; u: string; e: string; d: string; g: string[]; s: string }[];
+  /** 件数の後ろに付ける語（件 / results / 篇） */
+  count: string;
+  /** 0件のときの文言。{q} を検索語に置き換える */
+  none: string;
+}
+const { index, count, none } = Astro.props;
+---
+
+<script is:inline set:html={`window.__POSTS__ = ${JSON.stringify(index)}; window.__SEARCH_UI__ = ${JSON.stringify({ count, none })};`} />
+<script>
+  const q = document.getElementById('q') as HTMLInputElement | null;
+  const results = document.getElementById('results')!;
+  const serverList = document.getElementById('server-list')!;
+  const posts = (window as any).__POSTS__ as { t: string; u: string; e: string; d: string; g: string[]; s: string }[];
+  const ui = (window as any).__SEARCH_UI__ as { count: string; none: string };
+
+  const esc = (s: string) =>
+    s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
+
+  function render(hits: typeof posts, query: string) {
+    if (!hits.length) {
+      results.innerHTML = `<p class="none">${esc(ui.none).replace('{q}', esc(query))}</p>`;
+      return;
+    }
+    results.innerHTML =
+      `<p class="none">${hits.length} ${esc(ui.count)}</p><ul class="list">` +
+      hits
+        .map(
+          (p) => `<li>
+          <a class="head" href="${p.u}"><span class="emoji">${p.e}</span><span class="title">${esc(p.t)}</span></a>
+          <p class="excerpt">${esc(p.s)}</p>
+          <div class="meta">${p.d ? `<time datetime="${p.d}">${p.d}</time>` : ''}${p.g
+            .map((t) => `<span class="tag">${esc(t)}</span>`)
+            .join('')}</div>
+        </li>`,
+        )
+        .join('') +
+      '</ul>';
+  }
+
+  q?.addEventListener('input', () => {
+    const query = q.value.trim();
+    if (!query) {
+      results.hidden = true;
+      serverList.hidden = false;
+      return;
+    }
+    const lower = query.toLowerCase();
+    const hits = posts.filter((p) => `${p.t} ${p.s} ${p.g.join(' ')}`.toLowerCase().includes(lower));
+    render(hits, query);
+    results.hidden = false;
+    serverList.hidden = true;
+  });
+</script>

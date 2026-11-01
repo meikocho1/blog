@@ -1,7 +1,8 @@
 ---
 import Base from '../../layouts/Base.astro';
 import PostList from '../../components/PostList.astro';
-import { translatedPosts, LANGS, SITE, type Lang } from '../../posts';
+import SearchScript from '../../components/SearchScript.astro';
+import { translatedPosts, excerpt, LANGS, UI, SITE, type Lang } from '../../posts';
 
 export function getStaticPaths() {
   return Object.keys(LANGS).map((lang) => ({ params: { lang } }));
@@ -9,11 +10,68 @@ export function getStaticPaths() {
 
 const { lang } = Astro.params as { lang: Lang };
 const L = LANGS[lang];
+const ui = UI[lang];
 const posts = await translatedPosts(lang);
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+const index = posts.map((p) => ({
+  t: p.data.title,
+  u: `${base}/${p.id}/`,
+  e: p.data.emoji ?? '📝',
+  d: p.data.published_at ?? '',
+  g: p.data.topics,
+  s: excerpt(p.body ?? '', 90),
+}));
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Blog',
+  name: SITE.title,
+  description: ui.bio,
+  url: new URL(`${base}/${lang}/`, Astro.site).href,
+  inLanguage: L.htmlLang,
+  author: { '@type': 'Person', name: SITE.author, url: SITE.authorUrl },
+};
+
+// 言語別トップ同士と日本語トップを hreflang でつなぐ
+const alternates = Object.values(UI).map((u) => ({ lang: u.htmlLang, label: u.label, href: base + u.home }));
 ---
 
-<Base title={SITE.title} lang={L.htmlLang} ogLocale={L.ogLocale}>
-  <h1>{L.list}</h1>
-  <p class="none">{L.note}</p>
-  <PostList posts={posts} />
+<Base title={SITE.title} description={ui.bio} lang={L.htmlLang} ogLocale={L.ogLocale} jsonLd={jsonLd} alternates={alternates}>
+  <section class="hero">
+    <img class="hero-avatar" src={base + SITE.avatar} alt="" width="84" height="84" loading="eager" />
+    <div>
+      <h1 lang="ja">すみ<span class="amp">と</span>黒</h1>
+      <p class="bio">{ui.bio}</p>
+    </div>
+  </section>
+
+  <input id="q" class="q" type="search" placeholder={ui.search} autocomplete="off" aria-label={ui.search} />
+
+  <div id="results" hidden></div>
+  <div id="server-list">
+    <PostList posts={posts} />
+  </div>
+
+  <SearchScript index={index} count={ui.count} none={ui.none} />
+
+  <style>
+    .hero { display: flex; align-items: center; gap: 18px; margin-bottom: 32px; }
+    .hero-avatar { border-radius: 50%; flex: none; background: var(--msg-bg); }
+    .hero h1 { font-size: 1.35rem; margin: 0 0 6px; }
+    .amp { color: var(--muted); font-weight: 400; margin: 0 2px; }
+    .bio { margin: 0; font-size: 14px; color: var(--muted); line-height: 1.7; }
+    .q {
+      width: 100%;
+      padding: 9px 12px;
+      margin-bottom: 8px;
+      font-size: 16px;
+      font-family: inherit;
+      color: var(--fg);
+      background: var(--msg-bg);
+      border: 1px solid transparent;
+      border-radius: 8px;
+    }
+    .q:focus { outline: none; border-color: var(--accent); }
+  </style>
 </Base>

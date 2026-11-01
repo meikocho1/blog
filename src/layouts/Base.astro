@@ -1,5 +1,5 @@
 ---
-import { SITE } from '../posts';
+import { SITE, UI } from '../posts';
 
 interface Props {
   title: string;
@@ -32,7 +32,14 @@ const {
 } = Astro.props;
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
-const home = `${base}/`;
+const ui = Object.values(UI).find((u) => u.htmlLang === lang) ?? UI.ja;
+const home = base + ui.home;
+// 記事ページは同じ記事の別言語へ、それ以外は各言語のトップへ
+const langLinks = Object.values(UI).map((u) => ({
+  ...u,
+  href: alternates.find((a) => a.lang === u.htmlLang)?.href ?? base + u.home,
+  sameArticle: alternates.some((a) => a.lang === u.htmlLang),
+}));
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
 const avatar = base + SITE.avatar;
 const ogImage = new URL(base + (image ?? SITE.avatar), Astro.site).href;
@@ -98,15 +105,56 @@ const pageTitle = type === 'article' ? `${title} | ${SITE.title}` : SITE.title;
         <img class="brand-avatar" src={avatar} alt="" width="30" height="30" loading="eager" />
         <span>{SITE.title}</span>
       </a>
+      <nav class="lang-menu" aria-label="Language / 言語 / 语言">
+        {langLinks.map((l) =>
+          l.htmlLang === lang ? (
+            <span aria-current="page" lang={l.htmlLang}>{l.label}</span>
+          ) : (
+            <a href={l.href} hreflang={l.htmlLang} lang={l.htmlLang} data-same={l.sameArticle ? '' : undefined}>
+              {l.label}
+            </a>
+          ),
+        )}
+      </nav>
     </header>
+    {
+      lang === 'ja' && alternates.length > 1 && (
+        <div class="lang-offer" hidden>
+          {langLinks
+            .filter((l) => l.sameArticle && l.offer)
+            .map((l) => (
+              <a href={l.href} hreflang={l.htmlLang} lang={l.htmlLang} data-offer={l.htmlLang.slice(0, 2)} hidden>
+                {l.offer} →
+              </a>
+            ))}
+          <button type="button" class="lang-offer-close" aria-label="閉じる / Close">×</button>
+        </div>
+      )
+    }
     <main>
       <slot />
     </main>
+    <script is:inline>
+      // ブラウザの優先言語が日本語より英語・中国語を先に挙げていたら、翻訳版を案内する
+      (() => {
+        const box = document.querySelector('.lang-offer');
+        if (!box) return;
+        try { if (localStorage.getItem('lang-offer-dismissed')) return; } catch {}
+        const prefs = (navigator.languages || [navigator.language]).map((l) => l.slice(0, 2).toLowerCase());
+        const pick = prefs.find((l) => l === 'ja' || box.querySelector(`[data-offer="${l}"]`));
+        const link = pick && pick !== 'ja' && box.querySelector(`[data-offer="${pick}"]`);
+        if (!link) return;
+        link.hidden = false;
+        box.hidden = false;
+        box.querySelector('.lang-offer-close').addEventListener('click', () => {
+          box.hidden = true;
+          try { localStorage.setItem('lang-offer-dismissed', '1'); } catch {}
+        });
+      })();
+    </script>
     <footer>
       <a href={`${base}/rss.xml`}>RSS</a> ·
-      <a href={SITE.authorUrl}>GitHub</a> · © {SITE.author}<br />
-      <a href={`${base}/`} hreflang="ja">日本語</a> · <a href={`${base}/en/`} hreflang="en">English</a> ·
-      <a href={`${base}/zh/`} hreflang="zh-CN">中文</a>
+      <a href={SITE.authorUrl}>GitHub</a> · © {SITE.author}
     </footer>
 
     <style is:global>
@@ -142,7 +190,48 @@ const pageTitle = type === 'article' ? `${title} | ${SITE.title}` : SITE.title;
         font-size: 16px;
       }
       header, main, footer { max-width: 720px; margin: 0 auto; padding: 0 20px; }
-      header { padding-top: 28px; padding-bottom: 24px; }
+      header {
+        padding-top: 28px;
+        padding-bottom: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+      .lang-menu { display: flex; gap: 2px; font-size: 13px; }
+      .lang-menu > * { padding: 4px 9px; border-radius: 999px; text-decoration: none; color: var(--muted); }
+      .lang-menu a:hover { color: var(--fg); background: var(--msg-bg); }
+      .lang-menu [aria-current] { color: var(--fg); background: var(--msg-bg); font-weight: 600; }
+      .lang-offer {
+        max-width: 680px;
+        margin: -8px auto 24px;
+        padding: 10px 8px 10px 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        font-size: 14px;
+        background: var(--msg-bg);
+        border-radius: 8px;
+      }
+      .lang-offer[hidden], .lang-offer a[hidden] { display: none; }
+      .lang-offer a { text-decoration: none; }
+      .lang-offer-close {
+        flex: none;
+        width: 32px;
+        height: 32px;
+        border: 0;
+        border-radius: 6px;
+        background: none;
+        color: var(--muted);
+        font-size: 18px;
+        cursor: pointer;
+      }
+      .lang-offer-close:hover { color: var(--fg); background: var(--bg); }
+      /* 中国語を日本語フォントで描くと字形が日本式になるので、本文フォントを言語で切り替える */
+      html:lang(zh) body { font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans SC', sans-serif; }
+      html:lang(en) body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif; }
       .brand {
         display: inline-flex;
         align-items: center;
@@ -198,8 +287,6 @@ const pageTitle = type === 'article' ? `${title} | ${SITE.title}` : SITE.title;
         color: var(--muted);
       }
       .pager a { text-decoration: none; }
-      .langs { display: flex; flex-wrap: wrap; gap: 12px; margin: -28px 0 32px; font-size: 13px; color: var(--muted); }
-      .langs [aria-current] { color: var(--fg); font-weight: 600; text-decoration: none; }
     </style>
   </body>
 </html>

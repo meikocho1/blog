@@ -1,7 +1,6 @@
 ---
 import { render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
-import LangSwitch from '../../components/LangSwitch.astro';
 import { translatedPosts, excerpt, firstImage, alternatesFor, LANGS, SITE, type Lang } from '../../posts';
 
 export async function getStaticPaths() {
@@ -60,7 +59,6 @@ const jsonLd = {
       {post.data.published_at && <time datetime={post.data.published_at}>{post.data.published_at}</time>}
       {post.data.topics.map((t) => <span class="tag">{t}</span>)}
     </div>
-    <LangSwitch alternates={alternates} current={L.htmlLang} />
     <aside class="msg">
       {L.note} <a href={`${base}/${slug}/`} hreflang="ja" lang="ja">{L.original}</a>
     </aside>
