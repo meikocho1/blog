@@ -3,7 +3,7 @@ import { excerpt } from '../posts';
 import type { CollectionEntry } from 'astro:content';
 
 interface Props {
-  posts: CollectionEntry<'articles'>[];
+  posts: (CollectionEntry<'articles'> | CollectionEntry<'translations'>)[];
 }
 const { posts } = Astro.props;
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');

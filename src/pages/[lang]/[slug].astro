@@ -1,0 +1,73 @@
+---
+import { render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import LangSwitch from '../../components/LangSwitch.astro';
+import { translatedPosts, excerpt, firstImage, alternatesFor, LANGS, SITE, type Lang } from '../../posts';
+
+export async function getStaticPaths() {
+  const posts = await translatedPosts();
+  return posts.map((post) => {
+    const [lang, slug] = post.id.split('/');
+    return { params: { lang, slug }, props: { post } };
+  });
+}
+
+const { post } = Astro.props;
+const { lang, slug } = Astro.params as { lang: Lang; slug: string };
+const L = LANGS[lang];
+const { Content } = await render(post);
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const description = excerpt(post.body ?? '');
+const image = firstImage(post.body ?? '');
+const url = new URL(`${base}/${lang}/${slug}/`, Astro.site).href;
+const alternates = await alternatesFor(slug, base);
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: post.data.title,
+  description,
+  url,
+  mainEntityOfPage: url,
+  inLanguage: L.htmlLang,
+  translationOfWork: { '@type': 'BlogPosting', url: new URL(`${base}/${slug}/`, Astro.site).href, inLanguage: SITE.lang },
+  author: { '@type': 'Person', name: SITE.author, url: SITE.authorUrl },
+  publisher: { '@type': 'Person', name: SITE.author, url: SITE.authorUrl },
+  keywords: post.data.topics.join(', '),
+  ...(post.data.published_at
+    ? { datePublished: post.data.published_at, dateModified: post.data.published_at }
+    : {}),
+  ...(image ? { image: new URL(base + image, Astro.site).href } : {}),
+};
+---
+
+<Base
+  title={post.data.title}
+  description={description}
+  image={image}
+  type="article"
+  publishedAt={post.data.published_at}
+  topics={post.data.topics}
+  jsonLd={jsonLd}
+  lang={L.htmlLang}
+  ogLocale={L.ogLocale}
+  alternates={alternates}
+>
+  <article>
+    <h1>{post.data.emoji ?? '📝'} {post.data.title}</h1>
+    <div class="meta">
+      {post.data.published_at && <time datetime={post.data.published_at}>{post.data.published_at}</time>}
+      {post.data.topics.map((t) => <span class="tag">{t}</span>)}
+    </div>
+    <LangSwitch alternates={alternates} current={L.htmlLang} />
+    <aside class="msg">
+      {L.note} <a href={`${base}/${slug}/`} hreflang="ja" lang="ja">{L.original}</a>
+    </aside>
+    <Content />
+  </article>
+
+  <style>
+    .meta { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 40px; font-size: 12px; color: var(--muted); }
+  </style>
+</Base>

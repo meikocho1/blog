@@ -15,4 +15,14 @@ export const collections = {
       published_at: z.string().optional(),
     }),
   }),
+  /** articles/ の翻訳。id は `en/<slug>` / `zh/<slug>`。articles/ に置くと Zenn に同期されるので別フォルダ */
+  translations: defineCollection({
+    loader: glob({ pattern: '{en,zh}/*.md', base: './i18n' }),
+    schema: z.object({
+      title: z.string(),
+      emoji: z.string().optional(),
+      topics: z.array(z.string()).default([]),
+      published_at: z.string().optional(),
+    }),
+  }),
 };

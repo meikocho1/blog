@@ -1,0 +1,19 @@
+---
+import Base from '../../layouts/Base.astro';
+import PostList from '../../components/PostList.astro';
+import { translatedPosts, LANGS, SITE, type Lang } from '../../posts';
+
+export function getStaticPaths() {
+  return Object.keys(LANGS).map((lang) => ({ params: { lang } }));
+}
+
+const { lang } = Astro.params as { lang: Lang };
+const L = LANGS[lang];
+const posts = await translatedPosts(lang);
+---
+
+<Base title={SITE.title} lang={L.htmlLang} ogLocale={L.ogLocale}>
+  <h1>{L.list}</h1>
+  <p class="none">{L.note}</p>
+  <PostList posts={posts} />
+</Base>

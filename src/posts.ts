@@ -16,6 +16,35 @@ export const SITE = {
   googleSiteVerification: 'YvevDsFY1R6b9T_svBXNd1dfgbavtICCqXf5suQHcRs',
 } as const;
 
+export const LANGS = {
+  en: { label: 'English', htmlLang: 'en', ogLocale: 'en_US', note: 'Translated from the Japanese original.', original: 'Original (Japanese)', list: 'Articles in English' },
+  zh: { label: '中文', htmlLang: 'zh-CN', ogLocale: 'zh_CN', note: '本文译自日语原文。', original: '原文（日语）', list: '中文文章' },
+} as const;
+export type Lang = keyof typeof LANGS;
+
+/** 翻訳記事。日本語版がブログに出ているものだけ返す（draft の翻訳を漏らさない） */
+export async function translatedPosts(lang?: Lang) {
+  const visible = new Set((await publishedPosts()).map((p) => p.id));
+  const all = await getCollection('translations', (e) => {
+    const [l, slug] = e.id.split('/');
+    return visible.has(slug) && (!lang || l === lang);
+  });
+  return all.sort(
+    (a, b) =>
+      (b.data.published_at ?? '').localeCompare(a.data.published_at ?? '') ||
+      a.data.title.localeCompare(b.data.title),
+  );
+}
+
+/** slug ごとの言語別 URL（ja を含む）。hreflang と切替リンクに使う */
+export async function alternatesFor(slug: string, base: string) {
+  const langs = (await translatedPosts()).filter((t) => t.id.split('/')[1] === slug).map((t) => t.id.split('/')[0] as Lang);
+  return [
+    { lang: 'ja', label: '日本語', href: `${base}/${slug}/` },
+    ...langs.map((l) => ({ lang: LANGS[l].htmlLang, label: LANGS[l].label, href: `${base}/${l}/${slug}/` })),
+  ];
+}
+
 /** 1ページあたりの記事数 */
 export const PER_PAGE = 12;
 
