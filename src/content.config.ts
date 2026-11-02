@@ -21,11 +21,8 @@ export const collections = {
     schema: z.object({
       title: z.string(),
       emoji: z.string().optional(),
-      // トピックは日本語版と共通の名前。英中ページでは読めない日本語タグを出さない
-      topics: z
-        .array(z.string())
-        .default([])
-        .transform((ts) => ts.filter((t) => /^[\x20-\x7E]+$/.test(t))),
+      /** 日本語版と共通の名前。表示時に i18n/topics.json で訳す */
+      topics: z.array(z.string()).default([]),
       published_at: z.string().optional(),
     }),
   }),

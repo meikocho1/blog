@@ -21,7 +21,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
         <div class="meta">
           {p.data.published_at && <time datetime={p.data.published_at}>{p.data.published_at}</time>}
           {p.data.topics.map((t) => (
-            <a class="tag" href={`${base}/topics/${encodeURIComponent(t)}/`}>
+            <a class="tag" href={`${base}${p.id.includes('/') ? '/' + p.id.split('/')[0] : ''}/topics/${encodeURIComponent(t)}/`}>
               {t}
             </a>
           ))}

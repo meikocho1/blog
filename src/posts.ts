@@ -1,4 +1,5 @@
 import { getCollection } from 'astro:content';
+import TOPICS from '../i18n/topics.json';
 
 export const SITE = {
   title: 'すみと黒の記録',
@@ -24,9 +25,9 @@ export type Lang = keyof typeof LANGS;
 
 /** 画面の文言。ja はトップ・一覧、en/zh は言語別トップで使う */
 export const UI = {
-  ja: { htmlLang: 'ja', label: '日本語', home: '/', bio: SITE.bio, search: '記事を検索', count: '件', none: '「{q}」に一致する記事はありません。', offer: '' },
-  en: { htmlLang: 'en', label: 'English', home: '/en/', bio: 'A space where I look into topics that catch my interest and write up notes in my own way. Supervised by Kuro (a cat). Articles are translated from the Japanese originals.', search: 'Search articles', count: 'results', none: 'No articles match “{q}”.', offer: 'This article is also available in English' },
-  zh: { htmlLang: 'zh-CN', label: '中文', home: '/zh/', bio: '把感兴趣的话题按自己的方式整理成笔记的地方。监修：黑（猫）。文章译自日语原文。', search: '搜索文章', count: '篇', none: '没有与“{q}”匹配的文章。', offer: '本文也有中文版' },
+  ja: { htmlLang: 'ja', label: '日本語', home: '/', bio: SITE.bio, search: '記事を検索', all: 'すべて', topicCount: '本', count: '件', none: '「{q}」に一致する記事はありません。', offer: '' },
+  en: { htmlLang: 'en', label: 'English', home: '/en/', bio: 'A space where I look into topics that catch my interest and write up notes in my own way. Supervised by Kuro (a cat). Articles are translated from the Japanese originals.', search: 'Search articles', all: 'All', topicCount: 'articles', count: 'results', none: 'No articles match “{q}”.', offer: 'This article is also available in English' },
+  zh: { htmlLang: 'zh-CN', label: '中文', home: '/zh/', bio: '把感兴趣的话题按自己的方式整理成笔记的地方。监修：黑（猫）。文章译自日语原文。', search: '搜索文章', all: '全部', topicCount: '篇', count: '篇', none: '没有与“{q}”匹配的文章。', offer: '本文也有中文版' },
 } as const;
 export type UiLang = keyof typeof UI;
 
@@ -37,11 +38,37 @@ export async function translatedPosts(lang?: Lang) {
     const [l, slug] = e.id.split('/');
     return visible.has(slug) && (!lang || l === lang);
   });
-  return all.sort(
-    (a, b) =>
-      (b.data.published_at ?? '').localeCompare(a.data.published_at ?? '') ||
-      a.data.title.localeCompare(b.data.title),
-  );
+  return all
+    .map((e) => {
+      const l = e.id.split('/')[0] as Lang;
+      const topics = [...new Set(e.data.topics.map((t) => topicIn(t, l)))];
+      return { ...e, data: { ...e.data, topics } };
+    })
+    .sort(
+      (a, b) =>
+        (b.data.published_at ?? '').localeCompare(a.data.published_at ?? '') ||
+        a.data.title.localeCompare(b.data.title),
+    );
+}
+
+/** 日本語版のトピック名を訳す。英字のタグは訳語表に無ければそのまま */
+export function topicIn(topic: string, lang: Lang): string {
+  const hit = (TOPICS as Record<string, Record<Lang, string>>)[topic]?.[lang];
+  if (hit) return hit;
+  if (/^[\x20-\x7E]+$/.test(topic)) return topic;
+  // 訳の無い日本語タグを英中ページにそのまま出さないよう、ビルドで止める
+  throw new Error(`i18n/topics.json に「${topic}」の訳がありません`);
+}
+
+/** 言語別のトピックごとの記事数（多い順） */
+export async function translatedTopicCounts(lang: Lang) {
+  const counts = new Map<string, number>();
+  for (const p of await translatedPosts(lang)) {
+    for (const t of p.data.topics) counts.set(t, (counts.get(t) ?? 0) + 1);
+  }
+  return [...counts]
+    .map(([topic, count]) => ({ topic, count }))
+    .sort((a, b) => b.count - a.count || a.topic.localeCompare(b.topic));
 }
 
 /** slug ごとの言語別 URL（ja を含む）。hreflang と切替リンクに使う */

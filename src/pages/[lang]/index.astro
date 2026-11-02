@@ -1,6 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import PostList from '../../components/PostList.astro';
+import Nav from '../../components/Nav.astro';
 import SearchScript from '../../components/SearchScript.astro';
 import { translatedPosts, excerpt, LANGS, UI, SITE, type Lang } from '../../posts';
 
@@ -46,7 +47,7 @@ const alternates = Object.values(UI).map((u) => ({ lang: u.htmlLang, label: u.la
     </div>
   </section>
 
-  <input id="q" class="q" type="search" placeholder={ui.search} autocomplete="off" aria-label={ui.search} />
+  <Nav search lang={lang} />
 
   <div id="results" hidden></div>
   <div id="server-list">
@@ -61,17 +62,5 @@ const alternates = Object.values(UI).map((u) => ({ lang: u.htmlLang, label: u.la
     .hero h1 { font-size: 1.35rem; margin: 0 0 6px; }
     .amp { color: var(--muted); font-weight: 400; margin: 0 2px; }
     .bio { margin: 0; font-size: 14px; color: var(--muted); line-height: 1.7; }
-    .q {
-      width: 100%;
-      padding: 9px 12px;
-      margin-bottom: 8px;
-      font-size: 16px;
-      font-family: inherit;
-      color: var(--fg);
-      background: var(--msg-bg);
-      border: 1px solid transparent;
-      border-radius: 8px;
-    }
-    .q:focus { outline: none; border-color: var(--accent); }
   </style>
 </Base>

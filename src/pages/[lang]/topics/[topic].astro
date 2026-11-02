@@ -1,0 +1,52 @@
+---
+import Base from '../../../layouts/Base.astro';
+import Nav from '../../../components/Nav.astro';
+import PostList from '../../../components/PostList.astro';
+import { translatedPosts, LANGS, UI, SITE, type Lang } from '../../../posts';
+
+export async function getStaticPaths() {
+  const paths = [];
+  for (const lang of Object.keys(LANGS) as Lang[]) {
+    const byTopic = new Map<string, Awaited<ReturnType<typeof translatedPosts>>>();
+    for (const p of await translatedPosts(lang)) {
+      for (const t of p.data.topics) byTopic.set(t, [...(byTopic.get(t) ?? []), p]);
+    }
+    for (const [topic, items] of byTopic) paths.push({ params: { lang, topic }, props: { items } });
+  }
+  return paths;
+}
+
+const { items } = Astro.props;
+const { lang, topic } = Astro.params as { lang: Lang; topic: string };
+const L = LANGS[lang];
+const ui = UI[lang];
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const title = `#${topic}`;
+const description = `#${topic} · ${items.length} ${ui.topicCount}. ${ui.bio}`;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: title,
+  description,
+  url: new URL(`${base}/${lang}/topics/${encodeURIComponent(topic)}/`, Astro.site).href,
+  inLanguage: L.htmlLang,
+  hasPart: items.map((p) => ({
+    '@type': 'BlogPosting',
+    headline: p.data.title,
+    url: new URL(`${base}/${p.id}/`, Astro.site).href,
+  })),
+};
+---
+
+<Base title={title} description={description} jsonLd={jsonLd} lang={L.htmlLang} ogLocale={L.ogLocale}>
+  <h1>{title}</h1>
+  <p class="none">{items.length} {ui.topicCount}</p>
+  <Nav current={topic} lang={lang} />
+  <PostList posts={items} />
+
+  <style>
+    h1 { margin-bottom: 4px; }
+    .none { margin-bottom: 18px; }
+  </style>
+</Base>

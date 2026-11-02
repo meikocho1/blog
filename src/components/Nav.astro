@@ -1,15 +1,19 @@
 ---
-import { topicCounts } from '../posts';
+import { topicCounts, translatedTopicCounts, UI, type Lang } from '../posts';
 
 interface Props {
   /** 現在表示中のトピック。タブのハイライトに使う */
   current?: string;
   /** 検索ボックスを出すか（トップのみ） */
   search?: boolean;
+  /** 英中ページ。タブは訳したトピックで、リンク先は /<lang>/ 配下 */
+  lang?: Lang;
 }
-const { current, search = false } = Astro.props;
+const { current, search = false, lang } = Astro.props;
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
-const tabs = (await topicCounts()).slice(0, 8);
+const root = lang ? `${base}/${lang}` : base;
+const ui = UI[lang ?? 'ja'];
+const tabs = (lang ? await translatedTopicCounts(lang) : await topicCounts()).slice(0, 8);
 ---
 
 <nav class="nav">
@@ -19,26 +23,26 @@ const tabs = (await topicCounts()).slice(0, 8);
         id="q"
         class="q"
         type="search"
-        placeholder="記事を検索"
+        placeholder={ui.search}
         autocomplete="off"
-        aria-label="記事を検索"
+        aria-label={ui.search}
       />
     )
   }
   <div class="tabs">
-    <a class:list={['tab', { on: !current }]} href={`${base}/`}>すべて</a>
+    <a class:list={['tab', { on: !current }]} href={`${root}/`}>{ui.all}</a>
     {
       tabs.map((t) => (
         <a
           class:list={['tab', { on: current === t.topic }]}
-          href={`${base}/topics/${encodeURIComponent(t.topic)}/`}
+          href={`${root}/topics/${encodeURIComponent(t.topic)}/`}
         >
           {t.topic}
           <span class="n">{t.count}</span>
         </a>
       ))
     }
-    <a class="tab more" href={`${base}/topics/`}>すべてのトピック →</a>
+    {!lang && <a class="tab more" href={`${base}/topics/`}>すべてのトピック →</a>}
   </div>
 </nav>
 
