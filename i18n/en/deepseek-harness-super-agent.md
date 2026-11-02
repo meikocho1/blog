@@ -21,6 +21,8 @@ The problem statement fits in one paragraph.
 
 > In our experience, a person can usually follow only 3 to 5 active sessions at once. With these designs, a single task is limited by model capability, but multi-tasking is limited by human attention.
 
+![A pure white background. Sumi sits on a stool holding three tin-can telephones to his ears and mouth at once. Each string runs to a small boxy machine that keeps buzzing. Two more cans lie on the floor, their machines still buzzing too. The black cat sits by one dropped can, watching it. Orange: "Can only track 3~5". Red: "Nobody is listening". Blue: "Each is working"](/images/deepseek-harness-super-agent/en/01-three-cans-two-dropped.webp)
+
 So they want to hide the sessions from the user and make it look like "one agent that's always running." Five components are listed to get there.
 
 - Two layers: a Router that only talks to people and hands out work, and Workers isolated one task at a time
@@ -49,6 +51,8 @@ With this one, it delegated in 4 of 5 runs. In the remaining one, the model judg
 
 The Router is designed not to execute tasks itself, and section 2.1 says it "can run without a Bash tool." It has tools for handing out work and for recalling context, but it doesn't need a means of execution. If it doesn't have one, the judgment "this is small, I'll do it myself" never comes up in the first place. That said, I couldn't tell from the text whether the Router in 7.1 actually had its tools removed or was just held back by the prompt.
 
+![A pure white background. Sumi stands at a post-office-style counter, holding only a rubber stamp. On the wall behind him, dotted outlines show where a hammer and a wrench used to hang; red: "No tools". He slides stamped parcels down three chutes to separate workbenches where only hands are working. Blue near a small parcel: "Pass it on, even if small". Orange along the chutes: "Just delegate"](/images/deepseek-harness-super-agent/en/02-clerk-with-only-a-stamp.webp)
+
 This is the part I nodded at most. In my own config I've written, as a principle for designing apps, "don't use LLM judgment for things that can be written as a switch, like routing, retries, and status checks." This experiment is something close to a measurement of that. Writing "prioritize delegation, do small things yourself" in a prompt is only asking for a judgment, while not handing over a means of execution removes the room for judgment. I think the 1-in-5 outlier is the limit of asking, showing up as it is.
 
 Still, 7.1 compares the architecture as a whole (separating Router and Worker, subscription and pass-through, Worker isolation). It isn't an experiment that isolates "not giving it a means of execution." This data can't rank how much each piece contributes.
@@ -67,6 +71,8 @@ The original says that even then the Router "did not reach its throughput limit.
 
 For one thing, batches get bigger because events piled up during the previous inference. A batch size of 2.8 also means events are being made to wait. It's true that the amortized time drops, but that's efficiency that comes from a queue forming, and the wait for each individual event is probably getting longer (the original didn't measure wait time). The original also says the ceiling is set by "the context length and the number of Triggers it can handle accurately in one turn," so it isn't contradicting itself. But you should read off the numbers that the "current scale" in "enough for the current team size" is just short of 40 per minute.
 
+![A pure white background. Envelopes keep dropping from a wall mail slot into a long sagging basket on the floor, where the black cat sleeps on the pile. At a desk on the right, Sumi reads one letter while grabbing three more from the basket with his other hand. Blue: "40 per minute". Red: "Kept waiting". Orange: "Read in batches". A clock on the wall](/images/deepseek-harness-super-agent/en/03-mail-piling-up.webp)
+
 ## The more spontaneous it gets, the wider the attack surface
 
 The showpiece of the original is the example where the in-house Super-agent, in public group chats, finds a bug, tracks down the cause, and opens a PR without anyone @-mentioning it. The "quietly reproduce and fix" policy in section 3.4 points in the same direction.
@@ -84,6 +90,8 @@ Let me put these two next to the showpiece from before.
 - On the local machine there's a daemon, with uncommitted changes and local credentials.
 
 The more spontaneous it gets, the more chances there are for it to act on text an attacker wrote. The event filter in section 3.1 has a Fast Path that narrows by "sender, group, and allowlist," so narrowing it would protect you. But that's nearly the same operation as narrowing the "picks things up without anyone calling it" from before.
+
+![A pure white background. On the left, anonymous hands pin notes to a public bulletin board. A long mechanical arm reads the board on its own and reaches right, toward a key ring hanging beside Sumi's desk. Sumi pauses mid-sip of coffee, watching. The black cat holds an anonymous note in its mouth. Red: "Anyone can write" and "Keys at hand". Orange along the arm: "Acts without being called"](/images/deepseek-harness-super-agent/en/04-arm-reads-the-board.webp)
 
 So I think 8.4 is not the fourth item under "future work." It's a precondition for combining BYOM (the setup that connects your own machine) with spontaneous Triggers in production. The original's wording is "unless this problem is solved, it can only be used within a very small, trusted scope," which says the same thing. The difference is placement, and I'd put it before section 2. Also, the showpiece example is a public group chat and a user group, a setup that acts when "someone reports a bug." That puts an example that takes input from outside the small trusted scope in the most prominent place.
 
