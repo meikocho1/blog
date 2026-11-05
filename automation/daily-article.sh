@@ -55,7 +55,7 @@ caffeinate -is claude -p "$(cat "$REPO/automation/daily-article-prompt.md")" \
     "Edit(/i18n/en/**)" "Edit(/i18n/zh/**)" \
     "Bash(automation/codex-image.sh:*)" \
     "Bash(automation/codex-image-edit.sh:*)" \
-    "Bash(cwebp -q 80 /Users/akimitu/.codex/generated_images/* -o images/*)" \
+    "Bash(automation/webp.sh:*)" \
     "Bash(codex features list)" \
     "Bash(command -v codex)" \
     "Bash(find /Users/akimitu/.codex/generated_images:*)" \
