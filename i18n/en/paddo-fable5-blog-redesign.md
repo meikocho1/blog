@@ -2,6 +2,7 @@
 title: "paddo.dev's Fable 5 redesign"
 emoji: "🎨"
 topics: ["ai", "llm", "デザイン", "評価", "考察"]
+published_at: "2026-11-18"
 ---
 
 I tried to read the UX Planet article "Can Claude Fable 5.2 Replace Product Designers?" (Nick Babich, November 10, 2026), but it is members-only and I could only read the opening. Instead I found a post that answers a nearby question on the author's own site: paddo's "[One-Shot Taste: Redesigning This Blog with Claude Fable 5](https://paddo.dev/blog/one-shot-taste/)" (July 4, 2026). The model is the earlier Fable 5, and the question is slightly different too: "does a one-shot demo hold up on real work on an existing site?"
@@ -38,6 +39,8 @@ paddo's blog has a written design document. Dark only, cyan accent, pixel-art-st
 
 The site was violating its own design document. Gradient buttons that the document forbids, glow effects reaching even the bullet points of lists, the pixel font used larger than the upper limit, three card grids of identical construction on a site that promises hierarchy.
 
+![sumi lays a thin see-through sheet (blue label "Written rules") over three identical cards (blue label "All 3 same") like a stencil. Red circles and the red word "Gap" mark the corners where the cards stick out past the sheet. An orange "60%" sits beside sumi, and a black cat is at his feet](/images/paddo-fable5-blog-redesign/en/01-charge-sheet.webp)
+
 In paddo's estimate, 60% of the redesign that followed was making the site obey "rules that had already been written," and 40% was new moves. A phosphor-dot background that drifts in response to the cursor, and replacing the grid of identical cards with a numbered list, are examples. The post ends like this.
 
 > The phosphor field behind the title above you is the model’s idea. The rules that kept it cyan instead of purple-gradient are mine.
@@ -62,6 +65,8 @@ One thing became clear here. Rules that are easy to enforce are the ones written
 
 Conversely, rules like "make it good design" or "make the writing not sound like AI" cannot be enforced. I think how much can be left to the model is decided by how far we can write our rules into a form that can be judged.
 
+![sumi sits at a table holding a rubber stamp. On the left of the table are two crisp-edged tiles (blue label "Judge by looking"), one already marked with an orange check and "Passed". On the right, on a plate, is a shapeless cloud (red label "Make it good design"); the stamp has nothing to press on, with a red "Cannot stamp" label and a red question mark. A black cat watches the cloud](/images/paddo-fable5-blog-redesign/en/02-judgeable-rule.webp)
+
 ## The mobile width was never shown to the model
 
 Of the items paddo lists under "What Fable 5 doesn't solve," the one that interested me most was the one about verification.
@@ -71,6 +76,8 @@ Of the items paddo lists under "What Fable 5 doesn't solve," the one that intere
 paddo sums this up as QA still being a human job. Why only the mobile width was not checked by screenshot is not written. But the model did check the screens it could see itself, and the screens it did not see got through on reading code alone.
 
 Addy Osmani's post, which I covered earlier on this blog, also named letting the model verify its own work as the first thing to do when performance falls short. I think the same holds for design. Opening a browser at several widths and taking screenshots is now a few lines of script. If you hand over that procedure, there is a good chance the mobile width can be moved to the side the model looks at itself. I have not tried it, so I do not know whether the model can judge correctly what it sees.
+
+![Three screens of different widths sit on a shelf. The widest has a blue check and the blue label "Looked", the middle one is blank, and the narrowest phone screen is covered with a white cloth, a red question mark and the red label "Only read". sumi holds a camera (orange label "Screenshot steps") and lifts the corner of the cloth. A black cat sits at the end of the shelf](/images/paddo-fable5-blog-redesign/en/03-unseen-screen.webp)
 
 I'll also note the last item in the post. According to paddo, after the relaunch Fable 5 started silently routing flagged requests to Opus 4.8. Some of the posts saying "Fable 5 designed this" might actually be Opus output. When you compare by looking at demos, you need to keep this uncertainty in mind too.
 

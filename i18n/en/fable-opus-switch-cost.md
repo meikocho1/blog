@@ -35,6 +35,8 @@ The post's conclusion is there too.
 
 The post gives no number for how many points Fable is ahead of Opus at the same effort. It says per-model scores are on the Fable 5.2 introduction page, but I have not read that page. So all that can be said from this post alone is: "when you hit the effort ceiling, switching models can be cheaper, so it's worth trying." The evidence for that is the single FrontierCode result.
 
+![Sumi holds a magnifying glass and compares two flags standing at the ends of a level plank. On the left, a tall stack of coins with a blue "45.3" flag; on the right, a short stack of three coins with a blue "45.5" flag. An orange label above reads "Scores about equal", and a red label pointing at the short stack reads "Half the cost". A black cat sits at his feet](/images/fable-opus-switch-cost/en/01-score-cost-level.webp)
+
 ## On long runs, the gap is smaller than the 2x unit price
 
 At list price, Fable 5.2 is double Opus 5.5 on both input and output ($8 input and $40 output per million tokens, versus $4 and $20). But the cache-read price is the same.
@@ -61,11 +63,15 @@ Fable 5.2 can read the thinking blocks of Opus 5.5, Sonnet 5.5, and Haiku 5.5. I
 
 So if you stay in the same conversation and "move up to Fable when Opus gets stuck," then once you pay the cache-write cost, what Opus had thought up to that point is passed to Fable. The risky part is going back to Opus after Fable has gotten past the hard spot. If the reason Fable chose that design, or which options it threw away, exists only inside the thinking blocks, Opus carries on writing without knowing it. Since the request doesn't error, it should be hard to notice that the thinking was dropped.
 
+![On the left, sumi climbs from a low step to a high step carrying a cardboard box overflowing with paper notes (orange up arrow, orange labels "Up" and "Thoughts come along"). On the high step a pile of notes is left behind, with a red label "Thoughts left behind", and a black cat looks at it. On the right, the same sumi walks down empty-handed, with a black label "Back down"](/images/fable-opus-switch-cost/en/02-direction.webp)
+
 Note that this asymmetry should matter when you carry the same conversation history over as is. How thinking blocks are handled under `/compact` or in a new session is not written in the post, but if you re-summarize the history, it's natural to assume nothing is carried over on the way up either. Also, the post's explanation here is about the Claude API and Google Cloud (Google-managed), and I have not confirmed whether the same happens with `/model` in Claude Code.
 
 ## Have it write things down before going back
 
 The countermeasure I have in mind is simple: before stepping down from Fable, have it write the decisions it made and the options it discarded into the body of the conversation or into a plan file. Thinking blocks vanish, but ordinary messages and files remain. I have not yet tried this countermeasure deliberately.
+
+![Sumi sits at a desk on a tall platform, writing "Decisions" in blue on a card. The cards slide down an orange slide into a tray on a low desk, next to a "Dropped ideas" card, and a black cat reads one (orange label "Keep it in text"). Beside the platform an empty jar lies tipped over, its wisps fading, with a red label "Thoughts do not stay"](/images/fable-opus-switch-cost/en/03-write-before-return.webp)
 
 This doesn't contradict the post's advice either. The "write a short plan and start a new session" that the post recommends before switching is a way to cut the cache cost, but it is also a way to turn thinking into visible text. In either direction, if you write the plan and then switch, the cache cost is small and the reasoning stays as text. You also no longer need to rely on the "it's carried over on the way up" point from above.
 

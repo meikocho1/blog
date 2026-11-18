@@ -47,6 +47,8 @@ This is not a strange number. The tasks that fail at `low` are the hard ones, an
 
 The two-stage run comes out cheap not because the unit cost of a re-run is low. It is because few tasks get re-run. If you take the same approach to a group of tasks where the `low` pass rate drops, say a backlog that is hard from the start, I think this $0.17 will not reproduce. Suppose 30% fail at `low`. At the same unit cost the re-runs alone come to more than $0.16, and the total approaches the $0.29 of all tasks at `high`.
 
+![Sumi wheels only the failed red boxes on a hand truck from beside a thin conveyor belt toward a huge hand-cranked furnace. The ordinary boxes that passed pile up in a big bin, labelled "Most pass" in blue; "Only the failures" in red; an orange arrow points at the furnace's blank tag, "Re-runs cost more"](/images/opus-low-then-high-rerun/en/01-rerun-cost.webp)
+
 ## Don't read 1.7 points as an improvement in score
 
 Put 97% and 95.3% side by side and the two-stage run looks both cheaper and higher-scoring. But in its section on the advisor tool, the post says this. It is about a combination where Opus 5.5 had Fable 5.1 as an advisor, and scored 1.7 points higher than Opus 5.5 alone.
@@ -56,6 +58,8 @@ Put 97% and 95.3% side by side and the two-stage run looks both cheaper and high
 97 − 95.3 is also 1.7. The advisor result is from an internal coding benchmark with a different number of tasks, so I can't carry that yardstick over as is. Still, since the same post calls 1.7 points "the edge of run-to-run noise," I hesitate to read the two-stage run's 1.7 points as a score improvement.
 
 The rule of thumb I use in my own evaluation notes is `1/sqrt(tasks × runs)`, and if the difference is smaller than that I don't write "improved." I can't compute it because I don't know the subset's task count. That rule of thumb is a rough upper bound for pass rates around 50%, and near a ceiling like 95%+ the spread is smaller. So I can't go as far as "it's noise." The accurate statement is that "the post gives no material to tell it apart from noise."
+
+![Sumi crouches and looks through a magnifying glass at two paper cups of water at almost the same level. The table under them ripples and shakes, and the shaking range of the water line is a blue band, "noise band". The tiny gap between the two levels is a red "1.7 points". On the right, a tall and a short stack of coins with an orange arrow, "Cost down 40%"](/images/opus-low-then-high-rerun/en/02-noise-band.webp)
 
 I can think of one reason the score might look like it went up. In the two-stage run, a task that failed gets a second attempt. One run at `low` plus one run at `high`, and passing either one is enough. The post does not state the number of attempts, but if all tasks at `high` get one attempt each, the effect of effort and the effect of the number of attempts are mixed together.
 
@@ -72,6 +76,8 @@ In a benchmark, a test decides mechanically whether a task passed. In use where 
 In that case, an operating rule of "run once at `low`, and if it's no good, `high`" is something different from the post's two-stage run. For a task that failed at `low`, you read the diff, decide "no good," wait for the `high` result, and read it again. What the two-stage run saves is about $0.12 per task (0.29 − 0.17). Compared with the extra human re-reading and waiting on the failed tasks, which are a bit over one in ten, it looks to me like it does not pay.
 
 What can be used interactively is the first item in the post's order. Prepare tests and a build first, and have the model judge for itself. Then even when you run at `low`, you can expect the model to notice that it failed and redo the work. That said, the 97% figure came out on top of a strong judge, the benchmark's tests. If your own tests are lax, a task that failed but was counted as passing will not be re-run, and the number drops by that much. The way I found most useful to read the two-stage numbers is as a price list for building the judge first. You get that price only when the judge is as accurate as the one in the experiment.
+
+![Sumi fits a fine mesh into a wooden gate-like frame on legs, labelled "Checker" in blue (orange "Build it first"). On the right, boxes that passed land in a tray. At his feet a coarse-meshed sieve lies abandoned, a red box has slipped through its hole onto the floor, and a black cat watches (red "Slipped through")](/images/opus-low-then-high-rerun/en/03-sieve-checker.webp)
 
 ## If you take away only one thing
 

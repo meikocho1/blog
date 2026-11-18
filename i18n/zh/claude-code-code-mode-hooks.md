@@ -54,6 +54,8 @@ await edit(target, "maxAttempts: 3", "maxAttempts: 5");
 
 就上面的例子来说，分类器看到的是"编辑 `rg` 结果的第一行"这样的代码。具体编辑哪个文件，要等 `rg` 运行了才确定。平时的 auto mode 是逐个调用地看，所以我认为 Edit 的文件名它应该是看得到的，但 permission modes 那一页我没读，所以这是推测。
 
+![Sumi 坐在小桌前，用放大镜端详一张纸（运行前的代码），并在上面盖了一个蓝色的“分类器”印章。一支橙色箭头从纸上向右延伸，通向一台手摇的大机器；机器从一堆一模一样的文件盒里掉出一个到下面的箱子，上方飘着红色的问号，写着“哪个文件？”](/images/claude-code-code-mode-hooks/zh/01-plan-not-action.webp)
+
 接着我打开了自己的设置。`~/.claude/settings.json` 里 `defaultMode` 是 `auto`，`allow` 是空的，没有 `deny` 和 `ask`。另一个设置文件（`settings.local.json`）里有几条 `allow`，但 `deny` 和 `ask` 哪里都没有。也就是说，我没有写过任何拦截什么的规则，决定拦什么，几乎全交给了分类器。文档说"要保留规则或 hook"，我正是缺少那些规则的一方。
 
 文档还写了另一个提醒。Bash 的规则是按命令字符串来匹配的，所以用不匹配规则的写法，也能做同样的事。这并非 Code Mode 独有，它说。在 Code Mode 里，`app` 文件夹里的 `git push`，到 hook 那里可能是 `cd 'app' && git push`。如果要增加规则或 hook，就得采用把复合命令拆开再逐一检查的写法。
@@ -69,6 +71,8 @@ await edit(target, "maxAttempts: 3", "maxAttempts: 5");
 这种情况下，会按 PreToolUse 的 hook 没有返回判定来处理，调用被拒绝。即使没有设置 `onFailure` 也一样。
 
 `settings.json` 的 PreToolUse 里，有一个作用于所有工具的 hook，`timeout` 是 1 秒。从名字和显示的文案来看，我认为它是用来更新桌面宠物的显示的 hook，并不做权限判断（脚本的内容我没有读）。如果文档所说属实，那么在 Code Mode 下，代码一旦运行过，这个 hook 耗时超过 1 秒的调用就会被拒绝。本来没打算拦任何东西的 hook，站到了拦截的一边。实际上有多频繁地超过 1 秒，我没有测过。来自插件的 hook 的超时，我也没有确认。
+
+![Sumi 站在收费站式的栏杆闸机旁，手里拿着秒表（橙字“1秒”）。传送带上的一个箱子被落下的栏杆拦住，红字写着“拒绝”。闸机控制箱上，一只黑猫在打哈欠，旁边是蓝字“只是更新显示”](/images/claude-code-code-mode-hooks/zh/02-slow-hook-gate.webp)
 
 文档给的处方是延长超时，或者加上 `"onFailure": "continue"`。对只是更新显示的 hook，我认为后者合适。
 
@@ -87,5 +91,7 @@ Code Mode 的分类器看的是参数确定之前的代码。它看的是计划�
 ## 只带走一件事的话
 
 开启 Code Mode 之前，先数一数 `permissions` 里 `deny` 和 `ask` 的条数。如果是 0，那么想拦的东西能不能拦住，就只取决于一个看不到运行时确定的值的分类器。hook 的 `timeout` 放在那之后再看。
+
+![Sumi 蹲在文件柜前，拉开两个抽屉，抽屉上是蓝字“拒绝”和“确认”。两个抽屉都是空的，各写着一个红色的“0”。一支橙色箭头写着“只有这里”，指向远处小亭子（蓝字“分类器”）里的一只黑猫](/images/claude-code-code-mode-hooks/zh/03-empty-drawers.webp)
 
 出处：ClaudeDevs（@claudedevs）的[帖子](https://x.com/claudedevs/status/2122801681939234950)（2026 年 11 月 17 日 UTC）。Claude Code Docs"[Run tool calls from code with Code Mode](https://code.claude.com/docs/en/code-mode)"。它链接的权限、permission modes、hooks、sandboxing 这几页我没有读。我实际上没有开启 Code Mode，hook 超时时的行为，我在手头也没有确认过。

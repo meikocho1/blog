@@ -31,6 +31,8 @@ The test jobs have the same shape. The server test job went from 168 seconds to 
 
 The 30 minutes from 40 to 10 came from swapping the runner alone. The new runner's faster machines are probably mixed in, so I can't say all of it was waiting, but the article does say a single job could wait up to 11 minutes. The remaining 10 to 2 also owes something to swapping out lint and type-check tools, so not all of it is about waiting and preparation. Even so, the order of "when CI feels slow, suspect wait time and preparation time before the contents of the tests" matches the article's numbers.
 
+![Sumi sits on a small stool holding a coffee cup, looking along a very long row of empty chairs under a wall clock. A red brace over the row reads "Wait up to 11 min"; at the far end a small door is labelled "Tests" in blue, and the single chair in front of it carries an orange "8 sec"](/images/boardy-ci-20x-faster/en/01-wait-not-tests.webp)
+
 ## Where you cut to go faster, a path to a lying green opens
 
 From here it's my reading. From the article's 9 items, I picked out the moves that cut something or swapped it for something else to go faster, and re-sorted them by "where can this go green without anything being checked."
@@ -52,6 +54,8 @@ The most important row in this table is the `nx affected` one.
 
 They broke it on purpose, confirmed that green came out, and then closed the hole. Of the 9 items, this is the only one that describes attacking the mechanism they had just built this way. The nightly full run on main isn't framed this way in the article, but I read it as a second net over the same hole.
 
+![Sumi drapes a large cloth over a box of code whose changed lines are boxed in red, hiding it. Next to it, a hand-cranked sorting machine with an eye-shaped lens feeds six turnstile gates whose lamps are all lit blue. An orange arrow runs from the machine to the gates; labels read "Hidden change" in red, "Skipped" in orange and "All OK" in blue](/images/boardy-ci-20x-faster/en/02-hidden-change.webp)
+
 For `isolate: false`, the countermeasures the article lists are a state-reset hook and instructions to the agent. But those prevent leaks. They aren't a way to notice when a leak happens. If even one cleanup is missed, a test might ride on state left behind by another file and pass by luck. A test like that won't go red under `isolate: false`.
 
 ## Agents that just rerun
@@ -61,6 +65,8 @@ Why does a lying green matter that much? The article's cache story has a close e
 > That bug had been there all year. Nobody noticed because nobody was sitting there watching CI. The agents were, and they just retried instead of fixing the actual issue.
 
 The ones watching CI most closely were the agents, and instead of fixing the odd behavior, they got by with a rerun. Even with visible symptoms, slowness and the need to rerun, it went unnoticed for a year. This next part is my guess: a lying green doesn't even produce those symptoms. If an agent sees green and moves on to the next task, nobody gets a chance to notice.
+
+![A black cat on top of a big machine keeps pressing a round button labelled "Rerun" in orange. Inside the machine window a gear is cracked, circled in red with the red label "Not fixed". Sumi sits on a stool, peering at the crack through a magnifying glass and taking notes. A calendar on the side of the machine reads "A year as is" in blue](/images/boardy-ci-20x-faster/en/03-retry-button.webp)
 
 The article's 9th item hits the same spot. It's the reason the pre-push check lives in a hook instead of AGENTS.md.
 

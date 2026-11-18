@@ -39,6 +39,8 @@ Exploration has another kind of answer. Take "this function has three callers" w
 
 You can't spot these. The main model fixes the three reported callers and finishes without touching the fourth. If no test goes through that fourth one, nobody notices until review. That costs far more than the article's "opens the wrong file and spends tokens on it," and the cost doesn't show up on the token bill.
 
+![Sumi stands at a table inspecting three small paper sheets with legs, lined up in a basket, through a magnifying glass. An orange label by the basket reads "3 found" and a blue label above sumi reads "nobody notices". Behind sumi, a fourth sheet drawn with a red dashed outline ("the 4th" in red) walks off the edge of the table toward an open door](/images/explore-subagent-session-model/en/01-fourth-slips-away.webp)
+
 I think whether a mistake is cheap to spot is decided by the shape of the question, not by the model.
 
 - "Where is X?": if the answer is wrong, you know the moment you open it. A small model is fine
@@ -59,6 +61,8 @@ Below that I also wrote "読むだけ・検索 → `haiku`" (read-only and searc
 What I noticed after reading the article is that this rule depends on the main model writing `model` every time. If it forgets, Explore runs on the session's model. On a day when I've switched to Fable, that is Opus on the Claude API. I can't tell whether it forgot until I look at usage later.
 
 In another rules file I wrote, as a principle for designing apps, "ルーティング・リトライ・ステータス判定のように switch で書けるものに LLM の判断を使わない" (don't use LLM judgment for what can be written as a switch, like routing, retries, and status checks). I wrote it about apps, but which model explores is also something a switch can handle. Putting down one `Explore` definition fits my own principle better than reminding the model every time.
+
+![At a fork where one railway track splits in two, sumi screws a small metal plate onto the switch lever to fix it. An orange label on the plate reads "one definition file" and an orange arrow shows the lever pushed left. The small box at the end of the left road is labelled "haiku" in blue, and the big box at the end of the right road "session model" in blue. At sumi's feet lies a crumpled sticky note reading "remember every time" in red, struck through with a red X, with a black cat sitting on it](/images/explore-subagent-session-model/en/02-fixed-switch.webp)
 
 But if I put one down, it has to come with the line drawn above. And I noticed as I was writing this that my rule's "search → `haiku`" itself already sends even "list them all" explorations to Haiku. The hole was not only forgetting to write it.
 

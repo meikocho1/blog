@@ -50,6 +50,8 @@ The main subject is the permissions section. Each tool call inside the code pass
 
 In the example above, what the classifier sees is code that says "edit the first line of the `rg` result." Which file gets edited is not decided until `rg` runs. Ordinary auto mode looks at each call, so I think the file name for Edit should be visible to it, but I have not read the permission modes page, so that is a guess.
 
+![Sumi sits at a small desk, peering through a magnifying glass at a single sheet of paper (the code before it runs) and pressing a blue "Classifier" stamp on it. An orange arrow runs from the sheet to the right, to a big hand-cranked machine that drops one box out of a heap of identical file boxes into a bin; a red question mark floats over it, labelled "Which file?"](/images/claude-code-code-mode-hooks/en/01-plan-not-action.webp)
+
 Here I opened my own settings. In `~/.claude/settings.json`, `defaultMode` is `auto`, `allow` is empty, and there is no `deny` or `ask`. The other settings file (`settings.local.json`) has a few `allow` entries, but there is no `deny` or `ask` anywhere. In other words, I have written no rule that stops anything, and I leave almost all of the decisions about what to stop to the classifier. I am on the side that lacks the rules the document says to keep.
 
 The document also gives another caution. Bash rules match against the command string, so the same thing can be done in a form that matches no rule. This is not specific to Code Mode, it says. In Code Mode, a `git push` in the `app` folder can reach a hook as `cd 'app' && git push`. If I add rules or hooks, I will need to write them so that they split compound commands and check each part.
@@ -63,6 +65,8 @@ The other place where I stopped while reading was the troubleshooting section.
 In this case the call is rejected on the grounds that the PreToolUse hook did not return a decision. This is so even if `onFailure` is not set.
 
 In the PreToolUse section of `settings.json`, there is one hook that applies to all tools, and its `timeout` is 1 second. From its name and the text it displays, I believe it is a hook for updating the display of a desktop pet, and that it makes no permission decisions (I have not read the contents of the script). If the document is right, then in Code Mode, once code has run, any call where this hook takes longer than 1 second will be rejected. A hook that was never meant to stop anything ends up on the side that stops. I have not measured how often it actually exceeds 1 second. I have not checked the timeouts of the hooks that come from plugins either.
+
+![Sumi stands beside a toll-booth style barrier gate holding a stopwatch (orange "1 sec"). A box riding the conveyor has been stopped by the lowered bar and is marked "Denied" in red. A black cat yawns on the gate control box, with a blue note "Only updates the display"](/images/claude-code-code-mode-hooks/en/02-slow-hook-gate.webp)
 
 The document's prescription is to extend the timeout or to add `"onFailure": "continue"`. For a hook that only updates a display, I think the latter fits.
 
@@ -81,5 +85,7 @@ So my conclusion is that, before deciding whether to try Code Mode, I should cou
 ## If you take away just one thing
 
 Before turning on Code Mode, count the `deny` and `ask` entries in `permissions`. If it is 0, the only thing stopping what you want stopped is a classifier that does not see values decided at run time. Look at the hook `timeout` next.
+
+![Sumi crouches in front of a filing cabinet and pulls open its two drawers, labelled "Deny" and "Ask" in blue. Both are empty, each with a red "0". An orange arrow labelled "Only here" points to a black cat sitting in a small distant booth with a blue "Classifier" sign](/images/claude-code-code-mode-hooks/en/03-empty-drawers.webp)
 
 Sources: ClaudeDevs (@claudedevs)'s [post](https://x.com/claudedevs/status/2122801681939234950) (November 17, 2026 UTC). Claude Code Docs, "[Run tool calls from code with Code Mode](https://code.claude.com/docs/en/code-mode)". I have not read the permissions, permission modes, hooks, and sandboxing pages that it links to. I have not actually turned Code Mode on, and I have not confirmed on my machine what happens when a hook times out.

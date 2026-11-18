@@ -2,6 +2,7 @@
 title: "Checking SAG2's numbers against the paper"
 emoji: "🔎"
 topics: ["ai", "rag", "検索", "評価", "考察"]
+published_at: "2026-11-18"
 ---
 
 I read the X article "RAG这次真死了！SAG2才是本地知识库的神，又快又准又便宜～" (roughly: "RAG is really dead this time! SAG2 is the god of local knowledge bases, fast, accurate and cheap") by 袋鼠帝, dated November 9, 2026. It is an introduction to SAG2 by someone who builds knowledge bases for a living in the Chinese-speaking world. I wanted to find out why SAG2 is supposed to be stronger than RAG, so I went back to the original paper.
@@ -38,6 +39,8 @@ JEV is a judgment-only model published by TypeSafe AI. It does not write text; f
 
 The example of Zhang San in the X article (Company A acquires Company B, Zhang San is the CTO of Company A, Zhang San moves to the Pangu project) is just this 1 → 2 → 3 loop run as is.
 
+![Sumi sits at a desk and feeds one card from a tall pile of paragraph cards on the left (blue "Paragraphs") into a stamp machine labelled blue "JEV". Stamped cards collect in a tray in front (red "Usable?"), and sumi pencils words picked from a kept card onto a fresh card, which an orange arrow carries back to the pile (orange "Search again")](/images/sag2-paper-vs-x-claims/en/01-retrieval-loop.webp)
+
 ## The paper's numbers
 
 These are passage recall on three multi-hop question datasets (1,000 questions each). I pulled some of the table. Units are %.
@@ -70,6 +73,8 @@ What I thought was most worth reading is the ablation on MuSiQue (a comparison w
 
 Adding JEV alone stalls at around 68%. Even with as many judgments as SAG2 uses, finishing in one pass gives 69.82%. What produces the 17 points from there is searching again with the terms of the passages picked up, and having the judge see the evidence so far. Just not passing the evidence drops it by 10 points.
 
+![Sumi stands on the second of three steps, holding a stack of paper slips (blue "Carry the evidence") and a flashlight, one foot raised onto the tall third step. The steps read "54", "70" and "87" in black, with a red "+17" marking the tall riser](/images/sag2-paper-vs-x-claims/en/02-repeat-with-context.webp)
+
 So the core of SAG2's strength is neither BM25 nor JEV alone, but the loop of "searching again using what you found as a clue." This is not an idea opposed to RAG. Iterative retrieval such as IRCoT (a method that alternates reasoning and retrieval) has existed for some time, and the paper's related work lists it. What is new in SAG2 is running that loop with a lexical index that needs zero up-front processing and a cheap judge.
 
 So the comparison "SAG2 vs RAG" is, precisely, "retrieval that pulls once vs retrieval that repeats while judging." The passages SAG2 fetches are in the end handed to an LLM to build the answer. That is RAG.
@@ -85,6 +90,8 @@ The X article is passionate and easy to read, but there are places where, set ag
 > Consequently, the present system cannot be independently deployed entirely on premises using publicly released model artifacts, even though its retrieval index is local.
 
 It goes on to say that the question and the candidate texts have to be sent to that service. If you handle documents that cannot leave the company, this is the first thing to check. The accuracy when swapped to a different judge model is not evaluated in the paper.
+
+![From the serving hatch of a small house on the left (blue "Local index"), sumi hands an envelope of paper slips out through the wall (red "Leaves here"). An orange arrow labelled "Question + text" runs to a big machine on the right (blue "JEV")](/images/sag2-paper-vs-x-claims/en/03-judge-is-outside.webp)
 
 **"又快又准又便宜" ("fast, accurate and cheap") and "速度直接提升7000倍" ("speed directly up 7,000x").** 7,000x is the ratio of the first SAG version's index building time of 4.57 hours to SAG2's 2.36 seconds. The X article says the 4.57-hour figure does not appear in the SAG2 paper and comes from the first version's paper. I have not checked that one.
 
