@@ -21,6 +21,8 @@
   "検索": { "en": "search", "zh": "搜索" },
   "生成ai": { "en": "generative-ai", "zh": "生成式ai" },
   "組織": { "en": "organizations", "zh": "组织" },
+  "数学": { "en": "math", "zh": "数学" },
+  "自動化": { "en": "automation", "zh": "自动化" },
   "考察": { "en": "essay", "zh": "思考" },
   "設計": { "en": "software-design", "zh": "软件设计" },
   "評価": { "en": "evaluation", "zh": "评估" },
